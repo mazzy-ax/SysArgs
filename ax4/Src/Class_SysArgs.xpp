@@ -1,77 +1,4 @@
-﻿// This is a framework class. Customizing this class may cause problems with future upgrades to the software.
-class SysArgs extends Args implements SysPackable
-{
-    str             designName;
-    fieldId         lookupField;
-    str             lookupValue;
-    MenuItemType    menuItemType;
-    MenuItemName    menuItemName;
-    identifiername  name;
-    str             parm;
-    int             parmEnumType;
-    anyType         parmEnum;
-    Common          record;
-
-    #define.currentVersion(1)
-    #localmacro.currentList
-        designName,
-        lookupField,
-        lookupValue,
-        menuItemType,
-        menuItemName,
-        name,
-        parm,
-        parmEnumType,
-        parmEnum,
-        record
-    #endmacro
-
-    public container pack()
-    {
-        ;
-        designName      = this.designName();
-        lookupField     = this.lookupField();
-        lookupValue     = this.lookupValue();
-        menuItemType    = this.menuItemType();
-        menuItemName    = this.menuItemName();
-        name            = this.name();
-        parm            = this.parm();
-        parmEnumType    = this.parmEnumType();
-        parmEnum        = this.parmEnum();
-        record          = this.record();
-
-        return [#currentVersion, #currentList];
-    }
-
-    public boolean unpack(container _pack)
-    {
-        boolean         ret;
-        Integer         version    = RunBase::getVersion(_pack);
-
-        switch (version)
-        {
-            case #CurrentVersion:
-                [version, #CurrentList] = _pack;
-
-                this.designName(designName);
-                this.lookupField(lookupField);
-                this.lookupValue(lookupValue);
-                this.menuItemType(menuItemType);
-                this.menuItemName(menuItemName);
-                this.name(name);
-                this.parm(parm);
-                this.parmEnumType(parmEnumType);
-                this.parmEnum(parmEnum);
-                this.record(record);
-
-                ret = true;
-                break;
-            default:
-                ret = false;
-        }
-        return ret;
-    }
-
+﻿
     //
     // mazzy, https://github.com/mazzy-ax/SysArgs
     //
@@ -180,60 +107,6 @@ class SysArgs extends Args implements SysPackable
         return checkOk;
     }
 
-    /*
-        Can copy an args object data into another args object.
-    */
-    static public Object copyArgs(Args _fromArgs, Args _toArgs)
-    {
-        ;
-        if (_fromArgs && _toArgs)
-        {
-            _toArgs.caller(_fromArgs.caller());
-            _toArgs.object(_fromArgs.object());
-            _toArgs.parentWnd(_fromArgs.parentWnd());
-            _toArgs.parmObject(_fromArgs.parmObject());
-
-            _toArgs.designName(_fromArgs.designName());
-            _toArgs.lookupField(_fromArgs.lookupField());
-            _toArgs.lookupValue(_fromArgs.lookupValue());
-            _toArgs.menuItemType(_fromArgs.menuItemType());
-            _toArgs.menuItemName(_fromArgs.menuItemName());
-            _toArgs.name(_fromArgs.name());
-            _toArgs.parm(_fromArgs.parm());
-            _toArgs.parmEnumType(_fromArgs.parmEnumType());
-            _toArgs.parmEnum(_fromArgs.parmEnum());
-            _toArgs.record(_fromArgs.record());
-        }
-        return _toArgs;
-    }
-
-
-    static public SysArgs create(container _pack)
-    {
-        SysArgs sysArgs = new SysArgs();
-        ;
-        sysArgs.unpack(_pack);
-        return sysArgs;
-    }
-
-    public static SysArgs createFromArgs(Args _args)
-    {
-        SysArgs sysArgs;
-        ;
-        if (_args)
-        {
-            if (SysDictClass::isSuperclass(classNum(SysArgs), classidget(_args)))
-            {
-                sysArgs = SysArgs::copyArgs(_args, new SysArgs());
-            }
-            else
-            {
-                sysArgs = _args;
-            }
-        }
-        return sysArgs;
-    }
-
     //
     // mazzy, https://github.com/mazzy-ax/SysArgs
     //
@@ -313,4 +186,3 @@ class SysArgs extends Args implements SysPackable
 
         return args.record();
     }
-}
