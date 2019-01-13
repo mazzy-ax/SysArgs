@@ -1,0 +1,188 @@
+﻿
+    //
+    // mazzy, https://github.com/mazzy-ax/Args
+    //
+    public static void assertCallerFormName(Args args, FormName formName, str _funcname = '')
+    {
+        if( Args::getCallerFormName(args) == formName)
+            return;
+
+        throw error(Error::wrongUseOfFunction(_funcname ? _funcname : funcname()));
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/Args
+    //
+    public static void assertCallerType(Args args, classId  potentialAncestorClassId, str _funcname = '')
+    {
+        if( Args::checkCallerType(args, potentialAncestorClassId) )
+            return;
+
+        throw error(Error::wrongUseOfFunction(_funcname ? _funcname : funcname()));
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/Args
+    //
+    public static void assertEnumType(Args args, EnumId enumId, str _funcname = '')
+    {
+        if( Args::checkEnumType(args, enumId) )
+            return;
+
+        throw error(Error::wrongUseOfFunction(_funcname ? _funcname : funcname()));
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/Args
+    //
+    public static void assertFormDatasource(Args args, str _funcname = '')
+    {
+        if (args && args.record() && args.record().isFormDataSource())
+            return;
+
+        throw error(Error::wrongUseOfFunction(_funcname ? _funcname : funcname()));
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/Args
+    //
+    public static void assertRecord(Args args, TableId tableId, str _funcname = '')
+    {
+        if ( Args::checkRecord(args, tableId) )
+            return;
+
+        throw error(Error::wrongUseOfFunction(_funcname ? _funcname : funcname()));
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/Args
+    //
+    public static void assertTable(Args args, TableId tableId, str _funcname = '')
+    {
+        if ( Args::checkTable(args, tableId) )
+            return;
+
+        throw error(Error::wrongUseOfFunction(_funcname ? _funcname : funcname()));
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/Args
+    //
+    public static boolean checkCallerType(Args args, classId  potentialAncestorClassId)
+    {
+        boolean checkOk = args && args.caller() && SysDictClass::is(args.caller(), potentialAncestorClassId);
+        ;
+
+        return checkOk;
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/Args
+    //
+    public static boolean checkEnumType(Args args, EnumId enumId)
+    {
+        boolean checkOk = (args && args.parmEnumType() == enumId);
+
+        return checkOk;
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/Args
+    //
+    // запись из указанной таблицы и recId указан (запись существует)
+    public static boolean checkRecord(Args args, TableId tableId)
+    {
+        boolean checkOk = (args && args.dataset() == tableId && args.record() && args.record().RecId != 0);
+
+        return checkOk;
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/Args
+    //
+    public static boolean checkTable(Args args, TableId tableId)
+    {
+        boolean checkOk = (args && args.dataset() == tableId);
+
+        return checkOk;
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/Args
+    //
+    public static str getCallerFormName(Args args)
+    {
+        FormRun formRun;
+    ;
+        Args::assertCallerType(args, classnum(FormRun));
+
+        formRun = args.caller();
+        return formRun.form().name();
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/Args
+    //
+    // убедиться что в аргументах enum указанного типа и
+    // вернуть значение этого enum из аргументов
+    // бросает исключение, если enum не указанного типа
+    public static int getEnum(Args args, EnumId enumId)
+    {
+    ;
+        Args::assertEnumType(args, enumId);
+        return args.parmEnum();
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/Args
+    //
+    // тоже самое, что и Args::getEnum()
+    // но если в аргументах не нужный enum не выдает ошибку, а возвращает дефолтное значение.
+    public static int getEnumDefault(Args args, EnumId enumId, int defaultValue)
+    {
+        if( Args::checkEnumType(args, enumId) )
+            return args.parmEnum();
+
+        return defaultValue;
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/Args
+    //
+    public static container getMarkedRecIds(Args args, TableId tableId)
+    {
+        container       ret;
+        FormDataSource  fds;
+        common          record;
+    ;
+        Args::assertRecord(args, tableId);
+
+        fds = args.record().dataSource();
+        if( fds )
+        {
+            // marked records
+            for( record = fds.getFirst() ; record ; record = fds.getNext() )
+            {
+                ret += record.RecId;
+            }
+        }
+
+        if( ret == connull() )
+        {
+            // or a record itself
+            record = Args::getRecord(args, tableId);
+            ret += record.RecId;
+        }
+
+        return ret;
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/Args
+    //
+    public static Common getRecord(Args args, TableId tableId)
+    {;
+        Args::assertTable(args, tableId);
+
+        return args.record();
+    }

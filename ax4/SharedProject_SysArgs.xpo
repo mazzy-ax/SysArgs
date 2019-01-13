@@ -1,0 +1,1072 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: SysArgsTest unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #SysArgsTest
+    Id 50251
+    PROPERTIES
+      Name                #SysArgsTest
+      Extends             #SysTestCase
+      RunOn               #Called from
+    ENDPROPERTIES
+    
+    METHODS
+      Version: 3
+      SOURCE #classDeclaration
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #
+        #// not yet implemented
+        #// - the test testAssertFormDatasource() when a record.isFormDataSource()
+        #// - tests for SysArgs::getMarkedRecIds()
+        #class SysArgsTest extends SysTestCase
+        #{
+        #}
+      ENDSOURCE
+      SOURCE #testAssertCallerFormName
+        #void testAssertCallerFormName()
+        #{
+        #    Args        args            = new Args();
+        #
+        #    str         formName        = formstr(SysUserInfo);
+        #    Args        formRunArgs     = new Args(formName);
+        #    FormRun     formRun         = classFactory.formRunClass(formRunArgs);
+        #;
+        #    args.caller(formRun);
+        #
+        #    this.parmExceptionExpected(false);
+        #    SysArgs::assertCallerFormName(args, formName);
+        #}
+      ENDSOURCE
+      SOURCE #testAssertCallerFormName_Empty
+        #void testAssertCallerFormName_Empty()
+        #{
+        #    Args    args        = new Args();
+        #    str     formName    = formstr(SysUserInfo);
+        #;
+        #    this.parmExceptionExpected(true);
+        #    SysArgs::assertCallerFormName(args, formName);
+        #}
+      ENDSOURCE
+      SOURCE #testAssertCallerFormName_NotForm
+        #void testAssertCallerFormName_NotForm()
+        #{
+        #    Args    args        = new Args();
+        #    str     formName    = formstr(SysUserInfo);
+        #;
+        #    args.caller(this);
+        #
+        #    this.parmExceptionExpected(true);
+        #    SysArgs::assertCallerFormName(args, formName);
+        #}
+      ENDSOURCE
+      SOURCE #testAssertCallerFormName_NotMatch
+        #void testAssertCallerFormName_NotMatch()
+        #{
+        #    Args        args            = new Args();
+        #
+        #    str         formName        = formstr(SysUserInfo);
+        #    Args        formRunArgs     = new Args(formName);
+        #    FormRun     formRun         = classFactory.formRunClass(formRunArgs);
+        #;
+        #    args.caller(formRun);
+        #
+        #    this.parmExceptionExpected(true);
+        #    SysArgs::assertCallerFormName(args, formstr(SysUserGroupInfo));
+        #}
+      ENDSOURCE
+      SOURCE #testAssertCallerFormName_Null
+        #void testAssertCallerFormName_Null()
+        #{
+        #    Args    args;
+        #    str     formName    = formstr(SysUserInfo);
+        #;
+        #    this.parmExceptionExpected(true);
+        #    SysArgs::assertCallerFormName(args, formName);
+        #}
+      ENDSOURCE
+      SOURCE #testAssertCallerType
+        #void testAssertCallerType()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.caller(this);
+        #
+        #    this.parmExceptionExpected(false);
+        #    SysArgs::assertCallerType(args, classidget(this));
+        #}
+      ENDSOURCE
+      SOURCE #testAssertCallerType_Ancestor
+        #void testAssertCallerType_Ancestor()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.caller(this);
+        #
+        #    this.parmExceptionExpected(false);
+        #    SysArgs::assertCallerType(args, classnum(SysTestAssert));
+        #}
+      ENDSOURCE
+      SOURCE #testAssertCallerType_Empty
+        #void testAssertCallerType_Empty()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    this.parmExceptionExpected(true);
+        #    SysArgs::assertCallerType(args, classidget(this));
+        #}
+      ENDSOURCE
+      SOURCE #testAssertCallerType_Interface
+        #void testAssertCallerType_Interface()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.caller(this);
+        #
+        #    this.parmExceptionExpected(false);
+        #    SysArgs::assertCallerType(args, classnum(SysTestable));
+        #}
+      ENDSOURCE
+      SOURCE #testAssertCallerType_NotMatch
+        #void testAssertCallerType_NotMatch()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.caller(this);
+        #
+        #    this.parmExceptionExpected(true);
+        #    SysArgs::assertCallerType(args, classnum(FormRun));
+        #}
+      ENDSOURCE
+      SOURCE #testAssertCallerType_Null
+        #void testAssertCallerType_Null()
+        #{
+        #    Args    args;
+        #;
+        #    this.parmExceptionExpected(true);
+        #    SysArgs::assertCallerType(args, classidget(this));
+        #}
+      ENDSOURCE
+      SOURCE #testAssertEnumType
+        #void testAssertEnumType()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.parmEnumType(enumnum(NoYes));
+        #
+        #    this.parmExceptionExpected(false);
+        #    SysArgs::assertEnumType(args, enumnum(NoYes));
+        #}
+      ENDSOURCE
+      SOURCE #testAssertEnumType_Empty
+        #void testAssertEnumType_Empty()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    this.parmExceptionExpected(true);
+        #    SysArgs::assertEnumType(args, enumnum(NoYes));
+        #}
+      ENDSOURCE
+      SOURCE #testAssertEnumType_NotMatch
+        #void testAssertEnumType_NotMatch()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.parmEnumType(enumnum(NoYes));
+        #
+        #    this.parmExceptionExpected(true);
+        #    SysArgs::assertEnumType(args, enumnum(LedgerTransType));
+        #}
+      ENDSOURCE
+      SOURCE #testAssertEnumType_Null
+        #void testAssertEnumType_Null()
+        #{
+        #    Args    args;
+        #
+        #    this.parmExceptionExpected(true);
+        #    SysArgs::assertEnumType(args, enumnum(NoYes));
+        #}
+      ENDSOURCE
+      SOURCE #testAssertFormDatasource_Empty
+        #void testAssertFormDatasource_Empty()
+        #{
+        #    Args        args    = new Args();
+        #;
+        #    this.parmExceptionExpected(true);
+        #    SysArgs::assertFormDatasource(args);
+        #}
+      ENDSOURCE
+      SOURCE #testAssertFormDatasource_Fail
+        #void testAssertFormDatasource_Fail()
+        #{
+        #    Args        args    = new Args();
+        #    UserInfo    record;
+        #;
+        #    select firstOnly record;
+        #    args.record(record);
+        #
+        #    this.parmExceptionExpected(true);
+        #    SysArgs::assertFormDatasource(args);
+        #}
+      ENDSOURCE
+      SOURCE #testAssertFormDatasource_Null
+        #void testAssertFormDatasource_Null()
+        #{
+        #    this.parmExceptionExpected(true);
+        #    SysArgs::assertFormDatasource(null);
+        #}
+      ENDSOURCE
+      SOURCE #testAssertRecord
+        #void testAssertRecord()
+        #{
+        #    Args        args    = new Args();
+        #    UserInfo    record;
+        #;
+        #    select firstOnly record;
+        #    args.record(record);
+        #
+        #    this.parmExceptionExpected(false);
+        #    SysArgs::assertRecord(args, record.TableId);
+        #}
+      ENDSOURCE
+      SOURCE #testAssertRecord_Empty
+        #void testAssertRecord_Empty()
+        #{
+        #    Args        args    = new Args();
+        #    UserInfo    record;
+        #;
+        #    //select firstOnly record;
+        #    args.record(record);
+        #
+        #    this.parmExceptionExpected(true);
+        #    SysArgs::assertRecord(args, record.TableId);
+        #}
+      ENDSOURCE
+      SOURCE #testAssertRecord_NotMatch
+        #void testAssertRecord_NotMatch()
+        #{
+        #    Args        args    = new Args();
+        #    UserInfo    record;
+        #;
+        #    select firstOnly record;
+        #    args.record(record);
+        #
+        #    this.parmExceptionExpected(true);
+        #    SysArgs::assertRecord(args, tablenum(UserGroupInfo));
+        #}
+      ENDSOURCE
+      SOURCE #testAssertRecord_Null
+        #void testAssertRecord_Null()
+        #{
+        #    Args        args;
+        #    UserInfo    record;
+        #;
+        #    this.parmExceptionExpected(true);
+        #    SysArgs::assertRecord(args, record.TableId);
+        #}
+      ENDSOURCE
+      SOURCE #testAssertTable
+        #void testAssertTable()
+        #{
+        #    Args        args    = new Args();
+        #    UserInfo    record;
+        #;
+        #    select firstOnly record;
+        #    args.record(record);
+        #
+        #    this.parmExceptionExpected(false);
+        #    SysArgs::checkTable(args, record.TableId);
+        #}
+      ENDSOURCE
+      SOURCE #testAssertTable_Empty
+        #void testAssertTable_Empty()
+        #{
+        #    Args        args    = new Args();
+        #    UserInfo    record;
+        #;
+        #    //select firstOnly record;
+        #    args.record(record);
+        #
+        #    this.parmExceptionExpected(false);
+        #    SysArgs::assertTable(args, record.TableId);
+        #}
+      ENDSOURCE
+      SOURCE #testAssertTable_Map
+        #void testAssertTable_Map()
+        #{
+        #    Args            args    = new Args();
+        #    CustVendTrans   record  = CustTrans::find(0);
+        #;
+        #    args.record(record);
+        #
+        #    this.parmExceptionExpected(false);
+        #    SysArgs::assertTable(args, tablenum(CustTrans));
+        #}
+      ENDSOURCE
+      SOURCE #testAssertTable_MapEmpty
+        #void testAssertTable_MapEmpty()
+        #{
+        #    Args            args    = new Args();
+        #    CustVendTrans   record;
+        #;
+        #    args.record(record);
+        #
+        #    this.parmExceptionExpected(true);
+        #    SysArgs::assertTable(args, tablenum(CustTrans));
+        #}
+      ENDSOURCE
+      SOURCE #testAssertTable_NotMatch
+        #void testAssertTable_NotMatch()
+        #{
+        #    Args        args    = new Args();
+        #    UserInfo    record;
+        #;
+        #    select firstOnly record;
+        #    args.record(record);
+        #
+        #    this.parmExceptionExpected(true);
+        #    SysArgs::assertTable(args, tablenum(UserGroupInfo));
+        #}
+      ENDSOURCE
+      SOURCE #testAssertTable_Null
+        #void testAssertTable_Null()
+        #{
+        #    Args        args;
+        #    UserInfo    record;
+        #;
+        #    this.parmExceptionExpected(true);
+        #    SysArgs::assertTable(args, record.TableId);
+        #}
+      ENDSOURCE
+      SOURCE #testCheckCallerType
+        #void testCheckCallerType()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.caller(this);
+        #
+        #    this.assertTrue(SysArgs::checkCallerType(args, classidget(this)));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckCallerType_Ancestor
+        #void testCheckCallerType_Ancestor()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.caller(this);
+        #
+        #    this.assertTrue(SysArgs::checkCallerType(args, classnum(SysTestAssert)));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckCallerType_Empty
+        #void testCheckCallerType_Empty()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    this.assertFalse(SysArgs::checkCallerType(args, classidget(this)));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckCallerType_Interface
+        #void testCheckCallerType_Interface()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.caller(this);
+        #
+        #    this.assertTrue(SysArgs::checkCallerType(args, classnum(SysTestable)));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckCallerType_NotMatch
+        #void testCheckCallerType_NotMatch()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.caller(this);
+        #
+        #    this.assertFalse(SysArgs::checkCallerType(args, classnum(FormRun)));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckCallerType_Null
+        #void testCheckCallerType_Null()
+        #{
+        #    Args    args;
+        #;
+        #    this.assertFalse(SysArgs::checkCallerType(args, classidget(this)));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckEnumType
+        #void testCheckEnumType()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.parmEnumType(enumnum(NoYes));
+        #
+        #    this.assertTrue(SysArgs::checkEnumType(args, enumnum(NoYes)));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckEnumType_Empty
+        #void testCheckEnumType_Empty()
+        #{
+        #    Args    args = new Args();
+        #;
+        #    this.assertFalse(SysArgs::checkEnumType(args, enumnum(NoYes)));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckEnumType_NotMatch
+        #void testCheckEnumType_NotMatch()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.parmEnumType(enumnum(NoYes));
+        #
+        #    this.assertFalse(SysArgs::checkEnumType(args, enumnum(LedgerTransType)));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckEnumType_Null
+        #void testCheckEnumType_Null()
+        #{
+        #    Args    args;
+        #;
+        #    this.assertFalse(SysArgs::checkEnumType(args, enumnum(NoYes)));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckRecord
+        #void testCheckRecord()
+        #{
+        #    Args        args    = new Args();
+        #    UserInfo    record;
+        #;
+        #    select firstOnly record;
+        #    args.record(record);
+        #
+        #    this.assertTrue(SysArgs::checkRecord(args, record.TableId));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckRecord_Empty
+        #void testCheckRecord_Empty()
+        #{
+        #    Args        args    = new Args();
+        #    UserInfo    record;
+        #;
+        #    //select firstOnly record;
+        #    args.record(record);
+        #
+        #    this.assertFalse(SysArgs::checkRecord(args, record.TableId));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckRecord_NotMatch
+        #void testCheckRecord_NotMatch()
+        #{
+        #    Args        args    = new Args();
+        #    UserInfo    record;
+        #;
+        #    select firstOnly record;
+        #    args.record(record);
+        #
+        #    this.assertFalse(SysArgs::checkRecord(args, tablenum(UserGroupInfo)));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckRecord_Null
+        #void testCheckRecord_Null()
+        #{
+        #    Args        args;
+        #    UserInfo    record;
+        #;
+        #    this.assertFalse(SysArgs::checkRecord(args, record.TableId));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckTable
+        #void testCheckTable()
+        #{
+        #    Args        args    = new Args();
+        #    UserInfo    record;
+        #;
+        #    select firstOnly record;
+        #    args.record(record);
+        #
+        #    this.assertTrue(SysArgs::checkTable(args, record.TableId));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckTable_Empty
+        #void testCheckTable_Empty()
+        #{
+        #    Args        args    = new Args();
+        #    UserInfo    record;
+        #;
+        #    //select firstOnly record;
+        #    args.record(record);
+        #
+        #    this.assertTrue(SysArgs::checkTable(args, record.TableId));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckTable_Map
+        #void testCheckTable_Map()
+        #{
+        #    Args            args    = new Args();
+        #    CustVendTrans   record  = CustTrans::find(0);
+        #;
+        #    args.record(record);
+        #
+        #    this.assertTrue(SysArgs::checkTable(args, tablenum(CustTrans)));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckTable_MapEmpty
+        #void testCheckTable_MapEmpty()
+        #{
+        #    Args            args    = new Args();
+        #    CustVendTrans   record;
+        #;
+        #    args.record(record);
+        #
+        #    this.assertFalse(SysArgs::checkTable(args, tablenum(CustTrans)));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckTable_NotMatch
+        #void testCheckTable_NotMatch()
+        #{
+        #    Args        args    = new Args();
+        #    UserInfo    record;
+        #;
+        #    select firstOnly record;
+        #    args.record(record);
+        #
+        #    this.assertFalse(SysArgs::checkTable(args, tablenum(UserGroupInfo)));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckTable_Null
+        #void testCheckTable_Null()
+        #{
+        #    Args        args;
+        #    UserInfo    record;
+        #;
+        #    this.assertFalse(SysArgs::checkTable(args, record.TableId));
+        #}
+      ENDSOURCE
+      SOURCE #testGetEnum
+        #void testGetEnum()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.parmEnumType(enumnum(NoYes));
+        #    args.parmEnum(NoYes::Yes);
+        #
+        #    // as Integers!
+        #    this.assertEquals(0+NoYes::Yes, SysArgs::getEnum(args, enumnum(NoYes)));
+        #}
+      ENDSOURCE
+      SOURCE #testGetEnum_Empty
+        #void testGetEnum_Empty()
+        #{
+        #    Args    args = new Args();
+        #;
+        #    this.parmExceptionExpected(true);
+        #    this.assertEquals(NoYes::Yes, SysArgs::getEnum(args, enumnum(NoYes)));
+        #}
+      ENDSOURCE
+      SOURCE #testGetEnum_NotMatch
+        #void testGetEnum_NotMatch()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.parmEnumType(enumnum(LedgerTransType));
+        #    args.parmEnum(LedgerTransType::Sales);
+        #
+        #    this.parmExceptionExpected(true);
+        #    this.assertEquals(NoYes::Yes, SysArgs::getEnum(args, enumnum(NoYes)));
+        #}
+      ENDSOURCE
+      SOURCE #testGetEnum_Null
+        #void testGetEnum_Null()
+        #{
+        #    Args    args;
+        #;
+        #    this.parmExceptionExpected(true);
+        #    this.assertEquals(NoYes::Yes, SysArgs::getEnum(args, enumnum(NoYes)));
+        #}
+      ENDSOURCE
+      SOURCE #testGetEnumDefault
+        #void testGetEnumDefault()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.parmEnumType(enumnum(SysModule));
+        #    args.parmEnum(SysModule::Ledger);
+        #
+        #    // as Integers!
+        #    this.assertEquals(0+SysModule::Ledger, SysArgs::getEnumDefault(args, enumnum(SysModule), SysModule::System));
+        #}
+      ENDSOURCE
+      SOURCE #testGetEnumDefault_Empty
+        #void testGetEnumDefault_Empty()
+        #{
+        #    Args    args = new Args();
+        #;
+        #    // as Integers!
+        #    this.assertEquals(0+SysModule::System, SysArgs::getEnumDefault(args, enumnum(SysModule), SysModule::System));
+        #}
+      ENDSOURCE
+      SOURCE #testGetEnumDefault_NotMatch
+        #void testGetEnumDefault_NotMatch()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.parmEnumType(enumnum(LedgerTransType));
+        #    args.parmEnum(LedgerTransType::Sales);
+        #
+        #    // as Integers!
+        #    this.assertEquals(0+SysModule::System, SysArgs::getEnumDefault(args, enumnum(SysModule), SysModule::System));
+        #}
+      ENDSOURCE
+      SOURCE #testGetEnumDefault_Null
+        #void testGetEnumDefault_Null()
+        #{
+        #    Args    args;
+        #;
+        #    // as Integers!
+        #    this.assertEquals(0+SysModule::System, SysArgs::getEnumDefault(args, enumnum(SysModule), SysModule::System));
+        #}
+      ENDSOURCE
+      SOURCE #testGetRecord
+        #void testGetRecord()
+        #{
+        #    Args        args    = new Args();
+        #    UserInfo    record;
+        #;
+        #    select firstOnly record;
+        #    args.record(record);
+        #
+        #    this.assertTrue(bufCmp(record,SysArgs::getRecord(args, record.TableId)));
+        #}
+      ENDSOURCE
+      SOURCE #testGetRecord_Empty
+        #void testGetRecord_Empty()
+        #{
+        #    Args        args    = new Args();
+        #    UserInfo    record;
+        #;
+        #    //select firstOnly record;
+        #    args.record(record);
+        #
+        #    this.assertTrue(bufCmp(record,SysArgs::getRecord(args, record.TableId)));
+        #}
+      ENDSOURCE
+      SOURCE #testGetRecord_NotMatch
+        #void testGetRecord_NotMatch()
+        #{
+        #    Args        args    = new Args();
+        #    UserInfo    record;
+        #;
+        #    select firstOnly record;
+        #    args.record(record);
+        #
+        #    this.parmExceptionExpected(true);
+        #    SysArgs::getRecord(args, tablenum(UserGroupInfo));
+        #}
+      ENDSOURCE
+      SOURCE #testGetRecord_Null
+        #void testGetRecord_Null()
+        #{
+        #    Args        args;
+        #    UserInfo    record;
+        #;
+        #    this.parmExceptionExpected(true);
+        #    SysArgs::getRecord(args, record.TableId);
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: SysArgs unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #SysArgs
+    Id 7609
+    PROPERTIES
+      Name                #SysArgs
+      Extends             #Args
+      RunOn               #Called from
+    ENDPROPERTIES
+    
+    METHODS
+      Version: 3
+      SOURCE #classDeclaration
+        #// This is a framework class. Customizing this class may cause problems with future upgrades to the software.
+        #class SysArgs extends Args implements SysPackable
+        #{
+        #    str             designName;
+        #    fieldId         lookupField;
+        #    str             lookupValue;
+        #    MenuItemType    menuItemType;
+        #    MenuItemName    menuItemName;
+        #    identifiername  name;
+        #    str             parm;
+        #    int             parmEnumType;
+        #    anyType         parmEnum;
+        #    Common          record;
+        #
+        #    #define.currentVersion(1)
+        #    #localmacro.currentList
+        #        designName,
+        #        lookupField,
+        #        lookupValue,
+        #        menuItemType,
+        #        menuItemName,
+        #        name,
+        #        parm,
+        #        parmEnumType,
+        #        parmEnum,
+        #        record
+        #    #endmacro
+        #}
+      ENDSOURCE
+      SOURCE #Pack
+        #public container pack()
+        #{
+        #    ;
+        #    designName      = this.designName();
+        #    lookupField     = this.lookupField();
+        #    lookupValue     = this.lookupValue();
+        #    menuItemType    = this.menuItemType();
+        #    menuItemName    = this.menuItemName();
+        #    name            = this.name();
+        #    parm            = this.parm();
+        #    parmEnumType    = this.parmEnumType();
+        #    parmEnum        = this.parmEnum();
+        #    record          = this.record();
+        #
+        #    return [#currentVersion, #currentList];
+        #}
+      ENDSOURCE
+      SOURCE #unpack
+        #public boolean unpack(container _pack)
+        #{
+        #    boolean         ret;
+        #    Integer         version    = RunBase::getVersion(_pack);
+        #
+        #    switch (version)
+        #    {
+        #        case #CurrentVersion:
+        #            [version, #CurrentList] = _pack;
+        #
+        #            this.designName(designName);
+        #            this.lookupField(lookupField);
+        #            this.lookupValue(lookupValue);
+        #            this.menuItemType(menuItemType);
+        #            this.menuItemName(menuItemName);
+        #            this.name(name);
+        #            this.parm(parm);
+        #            this.parmEnumType(parmEnumType);
+        #            this.parmEnum(parmEnum);
+        #            this.record(record);
+        #
+        #            ret = true;
+        #            break;
+        #        default:
+        #            ret = false;
+        #    }
+        #    return ret;
+        #}
+      ENDSOURCE
+      SOURCE #assertCallerFormName
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public static void assertCallerFormName(Args args, FormName formName, str _funcname = '')
+        #{
+        #    if( SysArgs::getCallerFormName(args) == formName)
+        #        return;
+        #
+        #    throw error(Error::wrongUseOfFunction(_funcname ? _funcname : funcname()));
+        #}
+      ENDSOURCE
+      SOURCE #assertCallerType
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public static void assertCallerType(Args args, classId  potentialAncestorClassId, str _funcname = '')
+        #{
+        #    if( SysArgs::checkCallerType(args, potentialAncestorClassId) )
+        #        return;
+        #
+        #    throw error(Error::wrongUseOfFunction(_funcname ? _funcname : funcname()));
+        #}
+      ENDSOURCE
+      SOURCE #assertEnumType
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public static void assertEnumType(Args args, EnumId enumId, str _funcname = '')
+        #{
+        #    if( SysArgs::checkEnumType(args, enumId) )
+        #        return;
+        #
+        #    throw error(Error::wrongUseOfFunction(_funcname ? _funcname : funcname()));
+        #}
+      ENDSOURCE
+      SOURCE #assertFormDatasource
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public static void assertFormDatasource(Args args, str _funcname = '')
+        #{
+        #    if (args && args.record() && args.record().isFormDataSource())
+        #        return;
+        #
+        #    throw error(Error::wrongUseOfFunction(_funcname ? _funcname : funcname()));
+        #}
+      ENDSOURCE
+      SOURCE #assertRecord
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public static void assertRecord(Args args, TableId tableId, str _funcname = '')
+        #{
+        #    if ( SysArgs::checkRecord(args, tableId) )
+        #        return;
+        #
+        #    throw error(Error::wrongUseOfFunction(_funcname ? _funcname : funcname()));
+        #}
+      ENDSOURCE
+      SOURCE #assertTable
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public static void assertTable(Args args, TableId tableId, str _funcname = '')
+        #{
+        #    if ( SysArgs::checkTable(args, tableId) )
+        #        return;
+        #
+        #    throw error(Error::wrongUseOfFunction(_funcname ? _funcname : funcname()));
+        #}
+      ENDSOURCE
+      SOURCE #checkCallerType
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public static boolean checkCallerType(Args args, classId  potentialAncestorClassId)
+        #{
+        #    boolean checkOk = args && args.caller() && SysDictClass::is(args.caller(), potentialAncestorClassId);
+        #    ;
+        #
+        #    return checkOk;
+        #}
+      ENDSOURCE
+      SOURCE #checkEnumType
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public static boolean checkEnumType(Args args, EnumId enumId)
+        #{
+        #    boolean checkOk = (args && args.parmEnumType() == enumId);
+        #
+        #    return checkOk;
+        #}
+      ENDSOURCE
+      SOURCE #checkRecord
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #// запись из указанной таблицы и recId указан (запись существует)
+        #public static boolean checkRecord(Args args, TableId tableId)
+        #{
+        #    boolean checkOk = (args && args.dataset() == tableId && args.record() && args.record().RecId != 0);
+        #
+        #    return checkOk;
+        #}
+      ENDSOURCE
+      SOURCE #checkTable
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public static boolean checkTable(Args args, TableId tableId)
+        #{
+        #    boolean checkOk = (args && args.dataset() == tableId);
+        #
+        #    return checkOk;
+        #}
+      ENDSOURCE
+      SOURCE #copyArgs
+        #/*
+        #    Can copy an args object data into another args object.
+        #*/
+        #static public Object copyArgs(Args _fromArgs, Args _toArgs)
+        #{
+        #    ;
+        #    if (_fromArgs && _toArgs)
+        #    {
+        #        _toArgs.caller(_fromArgs.caller());
+        #        _toArgs.object(_fromArgs.object());
+        #        _toArgs.parentWnd(_fromArgs.parentWnd());
+        #        _toArgs.parmObject(_fromArgs.parmObject());
+        #
+        #        _toArgs.designName(_fromArgs.designName());
+        #        _toArgs.lookupField(_fromArgs.lookupField());
+        #        _toArgs.lookupValue(_fromArgs.lookupValue());
+        #        _toArgs.menuItemType(_fromArgs.menuItemType());
+        #        _toArgs.menuItemName(_fromArgs.menuItemName());
+        #        _toArgs.name(_fromArgs.name());
+        #        _toArgs.parm(_fromArgs.parm());
+        #        _toArgs.parmEnumType(_fromArgs.parmEnumType());
+        #        _toArgs.parmEnum(_fromArgs.parmEnum());
+        #        _toArgs.record(_fromArgs.record());
+        #    }
+        #    return _toArgs;
+        #}
+        #
+      ENDSOURCE
+      SOURCE #create
+        #static public SysArgs create(container _pack)
+        #{
+        #    SysArgs sysArgs = new SysArgs();
+        #    ;
+        #    sysArgs.unpack(_pack);
+        #    return sysArgs;
+        #}
+      ENDSOURCE
+      SOURCE #createFromArgs
+        #public static SysArgs createFromArgs(Args _args)
+        #{
+        #    SysArgs sysArgs;
+        #    ;
+        #    if (_args)
+        #    {
+        #        if (SysDictClass::isSuperclass(classNum(SysArgs), classidget(_args)))
+        #        {
+        #            sysArgs = SysArgs::copyArgs(_args, new SysArgs());
+        #        }
+        #        else
+        #        {
+        #            sysArgs = _args;
+        #        }
+        #    }
+        #    return sysArgs;
+        #}
+      ENDSOURCE
+      SOURCE #getCallerFormName
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public static str getCallerFormName(Args args)
+        #{
+        #    FormRun formRun;
+        #;
+        #    SysArgs::assertCallerType(args, classnum(FormRun));
+        #
+        #    formRun = args.caller();
+        #    return formRun.form().name();
+        #}
+      ENDSOURCE
+      SOURCE #getEnum
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #// убедиться что в аргументах enum указанного типа и
+        #// вернуть значение этого enum из аргументов
+        #// бросает исключение, если enum не указанного типа
+        #public static int getEnum(Args args, EnumId enumId)
+        #{
+        #;
+        #    SysArgs::assertEnumType(args, enumId);
+        #    return args.parmEnum();
+        #}
+      ENDSOURCE
+      SOURCE #getEnumDefault
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #// тоже самое, что и SysArgs::getEnum()
+        #// но если в аргументах не нужный enum не выдает ошибку, а возвращает дефолтное значение.
+        #public static int getEnumDefault(Args args, EnumId enumId, int defaultValue)
+        #{
+        #    if( SysArgs::checkEnumType(args, enumId) )
+        #        return args.parmEnum();
+        #
+        #    return defaultValue;
+        #}
+      ENDSOURCE
+      SOURCE #getMarkedRecIds
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public static container getMarkedRecIds(Args args, TableId tableId)
+        #{
+        #    container       ret;
+        #    FormDataSource  fds;
+        #    common          record;
+        #;
+        #    SysArgs::assertRecord(args, tableId);
+        #
+        #    fds = args.record().dataSource();
+        #    if( fds )
+        #    {
+        #        // marked records
+        #        for( record = fds.getFirst() ; record ; record = fds.getNext() )
+        #        {
+        #            ret += record.RecId;
+        #        }
+        #    }
+        #
+        #    if( ret == connull() )
+        #    {
+        #        // or a record itself
+        #        record = SysArgs::getRecord(args, tableId);
+        #        ret += record.RecId;
+        #    }
+        #
+        #    return ret;
+        #}
+      ENDSOURCE
+      SOURCE #getRecord
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public static Common getRecord(Args args, TableId tableId)
+        #{;
+        #    SysArgs::assertTable(args, tableId);
+        #
+        #    return args.record();
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: PRN
+
+; Microsoft Dynamics AX Project : SysArgs unloaded
+; --------------------------------------------------------------------------------
+  PROJECTVERSION 2
+  
+  PROJECT #SysArgs
+   SHARED
+  PROPERTIES
+    Name                #SysArgs
+  ENDPROPERTIES
+  
+    PROJECTCLASS ProjectNode
+    BEGINNODE
+      FILETYPE 0
+      UTILTYPE 45
+      UTILOBJECTID 50251
+      NODETYPE 329
+      NAME #SysArgsTest
+    ENDNODE
+    BEGINNODE
+      FILETYPE 0
+      UTILTYPE 45
+      UTILOBJECTID 7609
+      NODETYPE 329
+      NAME #SysArgs
+    ENDNODE
+  ENDPROJECT
+  
+
+***Element: END

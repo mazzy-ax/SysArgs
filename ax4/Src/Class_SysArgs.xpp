@@ -1,0 +1,316 @@
+﻿// This is a framework class. Customizing this class may cause problems with future upgrades to the software.
+class SysArgs extends Args implements SysPackable
+{
+    str             designName;
+    fieldId         lookupField;
+    str             lookupValue;
+    MenuItemType    menuItemType;
+    MenuItemName    menuItemName;
+    identifiername  name;
+    str             parm;
+    int             parmEnumType;
+    anyType         parmEnum;
+    Common          record;
+
+    #define.currentVersion(1)
+    #localmacro.currentList
+        designName,
+        lookupField,
+        lookupValue,
+        menuItemType,
+        menuItemName,
+        name,
+        parm,
+        parmEnumType,
+        parmEnum,
+        record
+    #endmacro
+
+    public container pack()
+    {
+        ;
+        designName      = this.designName();
+        lookupField     = this.lookupField();
+        lookupValue     = this.lookupValue();
+        menuItemType    = this.menuItemType();
+        menuItemName    = this.menuItemName();
+        name            = this.name();
+        parm            = this.parm();
+        parmEnumType    = this.parmEnumType();
+        parmEnum        = this.parmEnum();
+        record          = this.record();
+
+        return [#currentVersion, #currentList];
+    }
+
+    public boolean unpack(container _pack)
+    {
+        boolean         ret;
+        Integer         version    = RunBase::getVersion(_pack);
+
+        switch (version)
+        {
+            case #CurrentVersion:
+                [version, #CurrentList] = _pack;
+
+                this.designName(designName);
+                this.lookupField(lookupField);
+                this.lookupValue(lookupValue);
+                this.menuItemType(menuItemType);
+                this.menuItemName(menuItemName);
+                this.name(name);
+                this.parm(parm);
+                this.parmEnumType(parmEnumType);
+                this.parmEnum(parmEnum);
+                this.record(record);
+
+                ret = true;
+                break;
+            default:
+                ret = false;
+        }
+        return ret;
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/SysArgs
+    //
+    public static void assertCallerFormName(Args args, FormName formName, str _funcname = '')
+    {
+        if( SysArgs::getCallerFormName(args) == formName)
+            return;
+
+        throw error(Error::wrongUseOfFunction(_funcname ? _funcname : funcname()));
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/SysArgs
+    //
+    public static void assertCallerType(Args args, classId  potentialAncestorClassId, str _funcname = '')
+    {
+        if( SysArgs::checkCallerType(args, potentialAncestorClassId) )
+            return;
+
+        throw error(Error::wrongUseOfFunction(_funcname ? _funcname : funcname()));
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/SysArgs
+    //
+    public static void assertEnumType(Args args, EnumId enumId, str _funcname = '')
+    {
+        if( SysArgs::checkEnumType(args, enumId) )
+            return;
+
+        throw error(Error::wrongUseOfFunction(_funcname ? _funcname : funcname()));
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/SysArgs
+    //
+    public static void assertFormDatasource(Args args, str _funcname = '')
+    {
+        if (args && args.record() && args.record().isFormDataSource())
+            return;
+
+        throw error(Error::wrongUseOfFunction(_funcname ? _funcname : funcname()));
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/SysArgs
+    //
+    public static void assertRecord(Args args, TableId tableId, str _funcname = '')
+    {
+        if ( SysArgs::checkRecord(args, tableId) )
+            return;
+
+        throw error(Error::wrongUseOfFunction(_funcname ? _funcname : funcname()));
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/SysArgs
+    //
+    public static void assertTable(Args args, TableId tableId, str _funcname = '')
+    {
+        if ( SysArgs::checkTable(args, tableId) )
+            return;
+
+        throw error(Error::wrongUseOfFunction(_funcname ? _funcname : funcname()));
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/SysArgs
+    //
+    public static boolean checkCallerType(Args args, classId  potentialAncestorClassId)
+    {
+        boolean checkOk = args && args.caller() && SysDictClass::is(args.caller(), potentialAncestorClassId);
+        ;
+
+        return checkOk;
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/SysArgs
+    //
+    public static boolean checkEnumType(Args args, EnumId enumId)
+    {
+        boolean checkOk = (args && args.parmEnumType() == enumId);
+
+        return checkOk;
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/SysArgs
+    //
+    // запись из указанной таблицы и recId указан (запись существует)
+    public static boolean checkRecord(Args args, TableId tableId)
+    {
+        boolean checkOk = (args && args.dataset() == tableId && args.record() && args.record().RecId != 0);
+
+        return checkOk;
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/SysArgs
+    //
+    public static boolean checkTable(Args args, TableId tableId)
+    {
+        boolean checkOk = (args && args.dataset() == tableId);
+
+        return checkOk;
+    }
+
+    /*
+        Can copy an args object data into another args object.
+    */
+    static public Object copyArgs(Args _fromArgs, Args _toArgs)
+    {
+        ;
+        if (_fromArgs && _toArgs)
+        {
+            _toArgs.caller(_fromArgs.caller());
+            _toArgs.object(_fromArgs.object());
+            _toArgs.parentWnd(_fromArgs.parentWnd());
+            _toArgs.parmObject(_fromArgs.parmObject());
+
+            _toArgs.designName(_fromArgs.designName());
+            _toArgs.lookupField(_fromArgs.lookupField());
+            _toArgs.lookupValue(_fromArgs.lookupValue());
+            _toArgs.menuItemType(_fromArgs.menuItemType());
+            _toArgs.menuItemName(_fromArgs.menuItemName());
+            _toArgs.name(_fromArgs.name());
+            _toArgs.parm(_fromArgs.parm());
+            _toArgs.parmEnumType(_fromArgs.parmEnumType());
+            _toArgs.parmEnum(_fromArgs.parmEnum());
+            _toArgs.record(_fromArgs.record());
+        }
+        return _toArgs;
+    }
+
+
+    static public SysArgs create(container _pack)
+    {
+        SysArgs sysArgs = new SysArgs();
+        ;
+        sysArgs.unpack(_pack);
+        return sysArgs;
+    }
+
+    public static SysArgs createFromArgs(Args _args)
+    {
+        SysArgs sysArgs;
+        ;
+        if (_args)
+        {
+            if (SysDictClass::isSuperclass(classNum(SysArgs), classidget(_args)))
+            {
+                sysArgs = SysArgs::copyArgs(_args, new SysArgs());
+            }
+            else
+            {
+                sysArgs = _args;
+            }
+        }
+        return sysArgs;
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/SysArgs
+    //
+    public static str getCallerFormName(Args args)
+    {
+        FormRun formRun;
+    ;
+        SysArgs::assertCallerType(args, classnum(FormRun));
+
+        formRun = args.caller();
+        return formRun.form().name();
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/SysArgs
+    //
+    // убедиться что в аргументах enum указанного типа и
+    // вернуть значение этого enum из аргументов
+    // бросает исключение, если enum не указанного типа
+    public static int getEnum(Args args, EnumId enumId)
+    {
+    ;
+        SysArgs::assertEnumType(args, enumId);
+        return args.parmEnum();
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/SysArgs
+    //
+    // тоже самое, что и SysArgs::getEnum()
+    // но если в аргументах не нужный enum не выдает ошибку, а возвращает дефолтное значение.
+    public static int getEnumDefault(Args args, EnumId enumId, int defaultValue)
+    {
+        if( SysArgs::checkEnumType(args, enumId) )
+            return args.parmEnum();
+
+        return defaultValue;
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/SysArgs
+    //
+    public static container getMarkedRecIds(Args args, TableId tableId)
+    {
+        container       ret;
+        FormDataSource  fds;
+        common          record;
+    ;
+        SysArgs::assertRecord(args, tableId);
+
+        fds = args.record().dataSource();
+        if( fds )
+        {
+            // marked records
+            for( record = fds.getFirst() ; record ; record = fds.getNext() )
+            {
+                ret += record.RecId;
+            }
+        }
+
+        if( ret == connull() )
+        {
+            // or a record itself
+            record = SysArgs::getRecord(args, tableId);
+            ret += record.RecId;
+        }
+
+        return ret;
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/SysArgs
+    //
+    public static Common getRecord(Args args, TableId tableId)
+    {;
+        SysArgs::assertTable(args, tableId);
+
+        return args.record();
+    }
+}
