@@ -14,13 +14,13 @@
 
 ## Пример 1
 
-### Стало
+Стало:
 
 ```java
 reqTrans = SysArgs::getRecord(args, reqTrans.TableId);
 ```
 
-### Вместо
+Вместо:
 
 ```java
 if (args.dataset() == tablenum(ReqTrans) && args.record().RecId)
@@ -31,7 +31,7 @@ else
 
 ## Пример 2
 
-### Стало
+Стало:
 
 ```java
 SysArgs::assertCallerType(args, classnum(FormRun)); // пропустит дальше, только если вызвали из формы. Иначе бросит исключение.
@@ -40,7 +40,7 @@ if( SysArgs::checkRecord(args, tablenum(ProdTable)) )
     ...
 ```
 
-### Вместо
+Вместо:
 
 ```java
 if (args && args.caller() && args.dataset() == tablenum(ProdTable) && args.record().RecId)
@@ -51,7 +51,7 @@ if (args && args.caller() && args.dataset() == tablenum(ProdTable) && args.recor
 
 ## Пример 3 для ax2012
 
-### Стало
+Стало:
 
 ```java
 public static void main(Args args)
@@ -60,7 +60,7 @@ public static void main(Args args)
     ...
 ```
 
-### Вместо
+Вместо:
 
 ```java
 public static void main(Args args)
