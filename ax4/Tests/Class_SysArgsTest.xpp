@@ -203,8 +203,30 @@ class SysArgsTest extends SysTestCase
         //select firstOnly record;
         args.record(record);
 
-        this.parmExceptionExpected(true);
+        this.parmExceptionExpected(false);
         SysArgs::assertRecord(args, record.TableId);
+    }
+
+    void testAssertRecord_Map()
+    {
+        Args            args    = new Args();
+        CustVendTrans   record  = CustTrans::find(0);
+    ;
+        args.record(record);
+
+        this.parmExceptionExpected(false);
+        SysArgs::assertRecord(args, tablenum(CustTrans));
+    }
+
+    void testAssertRecord_MapEmpty()
+    {
+        Args            args    = new Args();
+        CustVendTrans   record;
+    ;
+        args.record(record);
+
+        this.parmExceptionExpected(true);
+        SysArgs::assertRecord(args, tablenum(CustTrans));
     }
 
     void testAssertRecord_NotMatch()
@@ -228,7 +250,7 @@ class SysArgsTest extends SysTestCase
         SysArgs::assertRecord(args, record.TableId);
     }
 
-    void testAssertTable()
+    void testAssertRecordExists()
     {
         Args        args    = new Args();
         UserInfo    record;
@@ -237,10 +259,10 @@ class SysArgsTest extends SysTestCase
         args.record(record);
 
         this.parmExceptionExpected(false);
-        SysArgs::checkTable(args, record.TableId);
+        SysArgs::assertRecordExists(args, record.TableId);
     }
 
-    void testAssertTable_Empty()
+    void testAssertRecordExists_Empty()
     {
         Args        args    = new Args();
         UserInfo    record;
@@ -248,33 +270,11 @@ class SysArgsTest extends SysTestCase
         //select firstOnly record;
         args.record(record);
 
-        this.parmExceptionExpected(false);
-        SysArgs::assertTable(args, record.TableId);
-    }
-
-    void testAssertTable_Map()
-    {
-        Args            args    = new Args();
-        CustVendTrans   record  = CustTrans::find(0);
-    ;
-        args.record(record);
-
-        this.parmExceptionExpected(false);
-        SysArgs::assertTable(args, tablenum(CustTrans));
-    }
-
-    void testAssertTable_MapEmpty()
-    {
-        Args            args    = new Args();
-        CustVendTrans   record;
-    ;
-        args.record(record);
-
         this.parmExceptionExpected(true);
-        SysArgs::assertTable(args, tablenum(CustTrans));
+        SysArgs::assertRecordExists(args, record.TableId);
     }
 
-    void testAssertTable_NotMatch()
+    void testAssertRecordExists_NotMatch()
     {
         Args        args    = new Args();
         UserInfo    record;
@@ -283,16 +283,16 @@ class SysArgsTest extends SysTestCase
         args.record(record);
 
         this.parmExceptionExpected(true);
-        SysArgs::assertTable(args, tablenum(UserGroupInfo));
+        SysArgs::assertRecordExists(args, tablenum(UserGroupInfo));
     }
 
-    void testAssertTable_Null()
+    void testAssertRecordExists_Null()
     {
         Args        args;
         UserInfo    record;
     ;
         this.parmExceptionExpected(true);
-        SysArgs::assertTable(args, record.TableId);
+        SysArgs::assertRecordExists(args, record.TableId);
     }
 
     void testCheckCallerType()
@@ -396,7 +396,27 @@ class SysArgsTest extends SysTestCase
         //select firstOnly record;
         args.record(record);
 
-        this.assertFalse(SysArgs::checkRecord(args, record.TableId));
+        this.assertTrue(SysArgs::checkRecord(args, record.TableId));
+    }
+
+    void testCheckRecord_Map()
+    {
+        Args            args    = new Args();
+        CustVendTrans   record  = CustTrans::find(0);
+    ;
+        args.record(record);
+
+        this.assertTrue(SysArgs::checkRecord(args, tablenum(CustTrans)));
+    }
+
+    void testCheckRecord_MapEmpty()
+    {
+        Args            args    = new Args();
+        CustVendTrans   record;
+    ;
+        args.record(record);
+
+        this.assertFalse(SysArgs::checkRecord(args, tablenum(CustTrans)));
     }
 
     void testCheckRecord_NotMatch()
@@ -418,7 +438,7 @@ class SysArgsTest extends SysTestCase
         this.assertFalse(SysArgs::checkRecord(args, record.TableId));
     }
 
-    void testCheckTable()
+    void testCheckRecordExists()
     {
         Args        args    = new Args();
         UserInfo    record;
@@ -426,10 +446,10 @@ class SysArgsTest extends SysTestCase
         select firstOnly record;
         args.record(record);
 
-        this.assertTrue(SysArgs::checkTable(args, record.TableId));
+        this.assertTrue(SysArgs::checkRecordExists(args, record.TableId));
     }
 
-    void testCheckTable_Empty()
+    void testCheckRecordExists_Empty()
     {
         Args        args    = new Args();
         UserInfo    record;
@@ -437,30 +457,10 @@ class SysArgsTest extends SysTestCase
         //select firstOnly record;
         args.record(record);
 
-        this.assertTrue(SysArgs::checkTable(args, record.TableId));
+        this.assertFalse(SysArgs::checkRecordExists(args, record.TableId));
     }
 
-    void testCheckTable_Map()
-    {
-        Args            args    = new Args();
-        CustVendTrans   record  = CustTrans::find(0);
-    ;
-        args.record(record);
-
-        this.assertTrue(SysArgs::checkTable(args, tablenum(CustTrans)));
-    }
-
-    void testCheckTable_MapEmpty()
-    {
-        Args            args    = new Args();
-        CustVendTrans   record;
-    ;
-        args.record(record);
-
-        this.assertFalse(SysArgs::checkTable(args, tablenum(CustTrans)));
-    }
-
-    void testCheckTable_NotMatch()
+    void testCheckRecordExists_NotMatch()
     {
         Args        args    = new Args();
         UserInfo    record;
@@ -468,15 +468,288 @@ class SysArgsTest extends SysTestCase
         select firstOnly record;
         args.record(record);
 
-        this.assertFalse(SysArgs::checkTable(args, tablenum(UserGroupInfo)));
+        this.assertFalse(SysArgs::checkRecordExists(args, tablenum(UserGroupInfo)));
     }
 
-    void testCheckTable_Null()
+    void testCheckRecordExists_Null()
     {
         Args        args;
         UserInfo    record;
     ;
-        this.assertFalse(SysArgs::checkTable(args, record.TableId));
+        this.assertFalse(SysArgs::checkRecordExists(args, record.TableId));
+    }
+
+    void testEnsureCallerFormName()
+    {
+        Args        args            = new Args();
+
+        str         formName        = formstr(SysUserInfo);
+        FormRun     formRun         = classFactory.formRunClass(new Args(formName));
+        SysArgs     sysArgs;
+    ;
+        args.caller(formRun);
+        sysArgs = SysArgs::createFromArgs(args);
+
+        this.parmExceptionExpected(false);
+        sysArgs.ensureCallerFormName(formName);
+    }
+
+    void testEnsureCallerFormName_Empty()
+    {
+        str         formName    = formstr(SysUserInfo);
+        SysArgs     sysArgs     = SysArgs::createFromArgs(new Args());
+    ;
+        this.parmExceptionExpected(true);
+        sysArgs.ensureCallerFormName(formName);
+    }
+
+    void testEnsureCallerFormName_NotForm()
+    {
+        Args        args        = new Args();
+        str         formName    = formstr(SysUserInfo);
+        SysArgs     sysArgs;
+    ;
+        args.caller(this);
+        sysArgs = SysArgs::createFromArgs(args);
+
+        this.parmExceptionExpected(true);
+        sysArgs.ensureCallerFormName(formName);
+    }
+
+    void testEnsureCallerFormName_NotMatch()
+    {
+        Args        args            = new Args();
+
+        str         formName        = formstr(SysUserInfo);
+        Args        formRunArgs     = new Args(formName);
+        FormRun     formRun         = classFactory.formRunClass(formRunArgs);
+        SysArgs     sysArgs;
+    ;
+        args.caller(formRun);
+        sysArgs = SysArgs::createFromArgs(args);
+
+        this.parmExceptionExpected(true);
+        sysArgs.ensureCallerFormName(formstr(SysUserGroupInfo));
+    }
+
+    void testEnsureCallerType()
+    {
+        Args        args    = new Args();
+        SysArgs     sysArgs;
+    ;
+        args.caller(this);
+        sysArgs = SysArgs::createFromArgs(args);
+
+        this.parmExceptionExpected(false);
+        sysArgs.ensureCallerType(classidget(this));
+    }
+
+    void testEnsureCallerType_Ancestor()
+    {
+        Args        args    = new Args();
+        SysArgs     sysArgs;
+    ;
+        args.caller(this);
+        sysArgs = SysArgs::createFromArgs(args);
+
+        this.parmExceptionExpected(false);
+        sysArgs.ensureCallerType(classnum(SysTestAssert));
+    }
+
+    void testEnsureCallerType_Empty()
+    {
+        SysArgs     sysArgs     = SysArgs::createFromArgs(new Args());
+    ;
+        this.parmExceptionExpected(true);
+        sysArgs.ensureCallerType(classidget(this));
+    }
+
+    void testEnsureCallerType_Interface()
+    {
+        Args        args    = new Args();
+        SysArgs     sysArgs;
+    ;
+        args.caller(this);
+        sysArgs = SysArgs::createFromArgs(args);
+
+        this.parmExceptionExpected(false);
+        sysArgs.ensureCallerType(classnum(SysTestable));
+    }
+
+    void testEnsureCallerType_NotMatch()
+    {
+        Args        args    = new Args();
+        SysArgs     sysArgs;
+    ;
+        args.caller(this);
+        sysArgs = SysArgs::createFromArgs(args);
+
+        this.parmExceptionExpected(true);
+        sysArgs.ensureCallerType(classnum(FormRun));
+    }
+
+    void testEnsureEnumType()
+    {
+        Args        args    = new Args();
+        SysArgs     sysArgs;
+    ;
+        args.parmEnumType(enumnum(NoYes));
+        sysArgs = SysArgs::createFromArgs(args);
+
+        this.parmExceptionExpected(false);
+        sysArgs.ensureEnumType(enumnum(NoYes));
+    }
+
+    void testEnsureEnumType_Empty()
+    {
+        SysArgs     sysArgs = SysArgs::createFromArgs(new Args());
+    ;
+        this.parmExceptionExpected(true);
+        sysArgs.ensureEnumType(enumnum(NoYes));
+    }
+
+    void testEnsureEnumType_NotMatch()
+    {
+        Args        args    = new Args();
+        SysArgs     sysArgs;
+    ;
+        args.parmEnumType(enumnum(NoYes));
+        sysArgs = SysArgs::createFromArgs(args);
+
+        this.parmExceptionExpected(true);
+        sysArgs.ensureEnumType(enumnum(LedgerTransType));
+    }
+
+    void testEnsureFormDatasource_Empty()
+    {
+        SysArgs     sysArgs = SysArgs::createFromArgs(new Args());
+    ;
+        this.parmExceptionExpected(true);
+        sysArgs.ensureFormDatasource();
+    }
+
+    void testEnsureFormDatasource_Fail()
+    {
+        Args        args    = new Args();
+        UserInfo    record;
+        SysArgs     sysArgs;
+    ;
+        select firstOnly record;
+        args.record(record);
+        sysArgs = SysArgs::createFromArgs(args);
+
+        this.parmExceptionExpected(true);
+        sysArgs.ensureFormDatasource();
+    }
+
+    void testEnsureRecord()
+    {
+        Args        args    = new Args();
+        UserInfo    record;
+        SysArgs     sysArgs;
+    ;
+        select firstOnly record;
+        args.record(record);
+        sysArgs = SysArgs::createFromArgs(args);
+
+        this.parmExceptionExpected(false);
+        sysArgs.ensureRecord(record.TableId);
+    }
+
+    void testEnsureRecord_Empty()
+    {
+        Args        args    = new Args();
+        UserInfo    record;
+        SysArgs     sysArgs;
+    ;
+        //select firstOnly record;
+        args.record(record);
+        sysArgs = SysArgs::createFromArgs(args);
+
+        this.parmExceptionExpected(false);
+        sysArgs.ensureRecord(record.TableId);
+    }
+
+    void testEnsureRecord_Map()
+    {
+        Args            args    = new Args();
+        CustVendTrans   record  = CustTrans::find(0);
+        SysArgs         sysArgs;
+    ;
+        args.record(record);
+        sysArgs = SysArgs::createFromArgs(args);
+
+        this.parmExceptionExpected(false);
+        sysArgs.ensureRecord(tablenum(CustTrans));
+    }
+
+    void testEnsureRecord_MapEmpty()
+    {
+        Args            args    = new Args();
+        CustVendTrans   record;
+        SysArgs         sysArgs;
+    ;
+        args.record(record);
+        sysArgs = SysArgs::createFromArgs(args);
+
+        this.parmExceptionExpected(true);
+        sysArgs.ensureRecord(tablenum(CustTrans));
+    }
+
+    void testEnsureRecord_NotMatch()
+    {
+        Args        args    = new Args();
+        UserInfo    record;
+        SysArgs     sysArgs;
+    ;
+        select firstOnly record;
+        args.record(record);
+        sysArgs = SysArgs::createFromArgs(args);
+
+        this.parmExceptionExpected(true);
+        sysArgs.ensureRecord(tablenum(UserGroupInfo));
+    }
+
+    void testEnsureRecordExists()
+    {
+        Args        args    = new Args();
+        UserInfo    record;
+        SysArgs     sysArgs;
+    ;
+        select firstOnly record;
+        args.record(record);
+        sysArgs = SysArgs::createFromArgs(args);
+
+        this.parmExceptionExpected(false);
+        sysArgs.ensureRecordExists(record.TableId);
+    }
+
+    void testEnsureRecordExists_Empty()
+    {
+        Args        args    = new Args();
+        UserInfo    record;
+        SysArgs     sysArgs;
+    ;
+        //select firstOnly record;
+        args.record(record);
+        sysArgs = SysArgs::createFromArgs(args);
+
+        this.parmExceptionExpected(true);
+        sysArgs.ensureRecordExists(record.TableId);
+    }
+
+    void testEnsureRecordExists_NotMatch()
+    {
+        Args        args    = new Args();
+        UserInfo    record;
+        SysArgs     sysArgs;
+    ;
+        select firstOnly record;
+        args.record(record);
+        sysArgs = SysArgs::createFromArgs(args);
+
+        this.parmExceptionExpected(true);
+        sysArgs.ensureRecordExists(tablenum(UserGroupInfo));
     }
 
     void testGetEnum()

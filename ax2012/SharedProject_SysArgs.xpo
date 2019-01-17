@@ -12,10 +12,69 @@ Formatversion: 1
       Name                #Args
       Extends             #xArgs
       Origin              #{B5D2A16C-D962-4D9C-94E9-C4AAE8B9C1C0}
-      LegacyId            #61448
     ENDPROPERTIES
     
     METHODS
+      SOURCE #ensureCallerFormName
+        #//
+        #// mazzy, https://github.com/mazzy-ax/Args
+        #//
+        #public Args ensureCallerFormName(FormName formName, str _funcname = '')
+        #{;
+        #    Args::assertCallerFormName(this, formName, _funcname ? _funcname : funcname());
+        #    return this;
+        #}
+      ENDSOURCE
+      SOURCE #ensureCallerType
+        #//
+        #// mazzy, https://github.com/mazzy-ax/Args
+        #//
+        #public Args ensureCallerType(classId  potentialAncestorClassId, str _funcname = '')
+        #{;
+        #    Args::assertCallerType(this, potentialAncestorClassId, _funcname ? _funcname : funcname());
+        #    return this;
+        #}
+      ENDSOURCE
+      SOURCE #ensureEnumType
+        #//
+        #// mazzy, https://github.com/mazzy-ax/Args
+        #//
+        #public Args ensureEnumType(EnumId enumId, str _funcname = '')
+        #{;
+        #    Args::assertEnumType(this, enumId, _funcname ? _funcname : funcname());
+        #    return this;
+        #}
+      ENDSOURCE
+      SOURCE #ensureFormDatasource
+        #//
+        #// mazzy, https://github.com/mazzy-ax/Args
+        #//
+        #public Args ensureFormDatasource(str _funcname = '')
+        #{;
+        #    Args::assertFormDatasource(this, _funcname ? _funcname : funcname());
+        #    return this;
+        #}
+      ENDSOURCE
+      SOURCE #ensureRecord
+        #//
+        #// mazzy, https://github.com/mazzy-ax/Args
+        #//
+        #public Args ensureRecord(TableId tableId = 0, str _funcname = '')
+        #{;
+        #    Args::assertRecord(this, tableId, _funcname ? _funcname : funcname());
+        #    return this;
+        #}
+      ENDSOURCE
+      SOURCE #ensureRecordExists
+        #//
+        #// mazzy, https://github.com/mazzy-ax/Args
+        #//
+        #public Args ensureRecordExists(TableId tableId = 0, str _funcname = '')
+        #{;
+        #    Args::assertRecordExists(this, tableId, _funcname ? _funcname : funcname());
+        #    return this;
+        #}
+      ENDSOURCE
       SOURCE #assertCallerFormName
         #//
         #// mazzy, https://github.com/mazzy-ax/Args
@@ -68,24 +127,24 @@ Formatversion: 1
         #//
         #// mazzy, https://github.com/mazzy-ax/Args
         #//
-        #public static void assertRecord(Args args, TableId tableId, str _funcname = '')
+        #public static void assertRecord(Args args, TableId tableId = 0, str _funcname = '')
         #{
         #    if ( Args::checkRecord(args, tableId) )
         #        return;
         #
-        #    throw error(Error::wrongUseOfFunction(_funcname ? _funcname : funcname()));
+        #    throw error(Error::missingRecord(_funcname ? _funcname : funcname()));
         #}
       ENDSOURCE
-      SOURCE #assertTable
+      SOURCE #assertRecordExists
         #//
         #// mazzy, https://github.com/mazzy-ax/Args
         #//
-        #public static void assertTable(Args args, TableId tableId, str _funcname = '')
+        #public static void assertRecordExists(Args args, TableId tableId = 0, str _funcname = '')
         #{
-        #    if ( Args::checkTable(args, tableId) )
+        #    if ( Args::checkRecordExists(args, tableId) )
         #        return;
         #
-        #    throw error(Error::wrongUseOfFunction(_funcname ? _funcname : funcname()));
+        #    throw error(Error::missingRecord(_funcname ? _funcname : funcname()));
         #}
       ENDSOURCE
       SOURCE #checkCallerType
@@ -94,8 +153,7 @@ Formatversion: 1
         #//
         #public static boolean checkCallerType(Args args, classId  potentialAncestorClassId)
         #{
-        #    boolean checkOk = args && args.caller() && SysDictClass::is(args.caller(), potentialAncestorClassId);
-        #    ;
+        #    boolean checkOk = args  && args.caller() && SysDictClass::is(args.caller(), potentialAncestorClassId);
         #
         #    return checkOk;
         #}
@@ -115,21 +173,27 @@ Formatversion: 1
         #//
         #// mazzy, https://github.com/mazzy-ax/Args
         #//
-        #// запись из указанной таблицы и recId указан (запись существует)
-        #public static boolean checkRecord(Args args, TableId tableId)
+        #// запись из указанной таблицы (или любой таблицы для tableId = 0)
+        #public static boolean checkRecord(Args args, TableId tableId = 0)
         #{
-        #    boolean checkOk = (args && args.dataset() == tableId && args.record() && args.record().RecId != 0);
+        #    boolean checkOk = (args != null);
+        #
+        #    if( checkOk && tableId )
+        #    {
+        #        checkOk = args.dataset() == tableId;
+        #    }
         #
         #    return checkOk;
         #}
       ENDSOURCE
-      SOURCE #checkTable
+      SOURCE #checkRecordExists
         #//
         #// mazzy, https://github.com/mazzy-ax/Args
         #//
-        #public static boolean checkTable(Args args, TableId tableId)
+        #// запись существует (recId != 0) и запись из указанной таблицы (или любой таблицы для tableId = 0)
+        #public static boolean checkRecordExists(Args args, TableId tableId = 0)
         #{
-        #    boolean checkOk = (args && args.dataset() == tableId);
+        #    boolean checkOk = (Args::checkRecord(args, tableId) && args.record() && args.record().RecId != 0);
         #
         #    return checkOk;
         #}
@@ -189,10 +253,10 @@ Formatversion: 1
         #    Args::assertRecord(args, tableId);
         #
         #    fds = args.record().dataSource();
-        #    if( fds )
+        #    if( fds && fds.anyMarked() )
         #    {
         #        // marked records
-        #        for( record = fds.getFirst() ; record ; record = fds.getNext() )
+        #        for( record = fds.getFirst(true) ; record ; record = fds.getNext() )
         #        {
         #            ret += record.RecId;
         #        }
@@ -212,9 +276,9 @@ Formatversion: 1
         #//
         #// mazzy, https://github.com/mazzy-ax/Args
         #//
-        #public static Common getRecord(Args args, TableId tableId)
+        #public static Common getRecord(Args args, TableId tableId = 0)
         #{;
-        #    Args::assertTable(args, tableId);
+        #    Args::assertRecord(args, tableId);
         #
         #    return args.record();
         #}
@@ -232,8 +296,7 @@ Formatversion: 1
     PROPERTIES
       Name                #ArgsTest
       Extends             #SysTestCase
-      Origin              #{B255D7AA-8243-408D-B4DD-BC4FAA01E15B}
-      LegacyId            #50251
+      Origin              #{7794BB55-B5F1-4DED-AE21-C6521B8D735E}
     ENDPROPERTIES
     
     METHODS
@@ -464,8 +527,32 @@ Formatversion: 1
         #    //select firstOnly record;
         #    args.record(record);
         #
-        #    this.parmExceptionExpected(true);
+        #    this.parmExceptionExpected(false);
         #    Args::assertRecord(args, record.TableId);
+        #}
+      ENDSOURCE
+      SOURCE #testAssertRecord_Map
+        #void testAssertRecord_Map()
+        #{
+        #    Args            args    = new Args();
+        #    CustVendTrans   record  = CustTrans::find(0);
+        #;
+        #    args.record(record);
+        #
+        #    this.parmExceptionExpected(false);
+        #    Args::assertRecord(args, tablenum(CustTrans));
+        #}
+      ENDSOURCE
+      SOURCE #testAssertRecord_MapEmpty
+        #void testAssertRecord_MapEmpty()
+        #{
+        #    Args            args    = new Args();
+        #    CustVendTrans   record;
+        #;
+        #    args.record(record);
+        #
+        #    this.parmExceptionExpected(true);
+        #    Args::assertRecord(args, tablenum(CustTrans));
         #}
       ENDSOURCE
       SOURCE #testAssertRecord_NotMatch
@@ -491,8 +578,8 @@ Formatversion: 1
         #    Args::assertRecord(args, record.TableId);
         #}
       ENDSOURCE
-      SOURCE #testAssertTable
-        #void testAssertTable()
+      SOURCE #testAssertRecordExists
+        #void testAssertRecordExists()
         #{
         #    Args        args    = new Args();
         #    UserInfo    record;
@@ -501,11 +588,11 @@ Formatversion: 1
         #    args.record(record);
         #
         #    this.parmExceptionExpected(false);
-        #    Args::checkTable(args, record.TableId);
+        #    Args::assertRecordExists(args, record.TableId);
         #}
       ENDSOURCE
-      SOURCE #testAssertTable_Empty
-        #void testAssertTable_Empty()
+      SOURCE #testAssertRecordExists_Empty
+        #void testAssertRecordExists_Empty()
         #{
         #    Args        args    = new Args();
         #    UserInfo    record;
@@ -513,36 +600,12 @@ Formatversion: 1
         #    //select firstOnly record;
         #    args.record(record);
         #
-        #    this.parmExceptionExpected(false);
-        #    Args::assertTable(args, record.TableId);
-        #}
-      ENDSOURCE
-      SOURCE #testAssertTable_Map
-        #void testAssertTable_Map()
-        #{
-        #    Args            args    = new Args();
-        #    CustVendTrans   record  = CustTrans::find(0);
-        #;
-        #    args.record(record);
-        #
-        #    this.parmExceptionExpected(false);
-        #    Args::assertTable(args, tablenum(CustTrans));
-        #}
-      ENDSOURCE
-      SOURCE #testAssertTable_MapEmpty
-        #void testAssertTable_MapEmpty()
-        #{
-        #    Args            args    = new Args();
-        #    CustVendTrans   record;
-        #;
-        #    args.record(record);
-        #
         #    this.parmExceptionExpected(true);
-        #    Args::assertTable(args, tablenum(CustTrans));
+        #    Args::assertRecordExists(args, record.TableId);
         #}
       ENDSOURCE
-      SOURCE #testAssertTable_NotMatch
-        #void testAssertTable_NotMatch()
+      SOURCE #testAssertRecordExists_NotMatch
+        #void testAssertRecordExists_NotMatch()
         #{
         #    Args        args    = new Args();
         #    UserInfo    record;
@@ -551,17 +614,17 @@ Formatversion: 1
         #    args.record(record);
         #
         #    this.parmExceptionExpected(true);
-        #    Args::assertTable(args, tablenum(UserGroupInfo));
+        #    Args::assertRecordExists(args, tablenum(UserGroupInfo));
         #}
       ENDSOURCE
-      SOURCE #testAssertTable_Null
-        #void testAssertTable_Null()
+      SOURCE #testAssertRecordExists_Null
+        #void testAssertRecordExists_Null()
         #{
         #    Args        args;
         #    UserInfo    record;
         #;
         #    this.parmExceptionExpected(true);
-        #    Args::assertTable(args, record.TableId);
+        #    Args::assertRecordExists(args, record.TableId);
         #}
       ENDSOURCE
       SOURCE #testCheckCallerType
@@ -677,7 +740,29 @@ Formatversion: 1
         #    //select firstOnly record;
         #    args.record(record);
         #
-        #    this.assertFalse(Args::checkRecord(args, record.TableId));
+        #    this.assertTrue(Args::checkRecord(args, record.TableId));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckRecord_Map
+        #void testCheckRecord_Map()
+        #{
+        #    Args            args    = new Args();
+        #    CustVendTrans   record  = CustTrans::find(0);
+        #;
+        #    args.record(record);
+        #
+        #    this.assertTrue(Args::checkRecord(args, tablenum(CustTrans)));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckRecord_MapEmpty
+        #void testCheckRecord_MapEmpty()
+        #{
+        #    Args            args    = new Args();
+        #    CustVendTrans   record;
+        #;
+        #    args.record(record);
+        #
+        #    this.assertFalse(Args::checkRecord(args, tablenum(CustTrans)));
         #}
       ENDSOURCE
       SOURCE #testCheckRecord_NotMatch
@@ -701,8 +786,8 @@ Formatversion: 1
         #    this.assertFalse(Args::checkRecord(args, record.TableId));
         #}
       ENDSOURCE
-      SOURCE #testCheckTable
-        #void testCheckTable()
+      SOURCE #testCheckRecordExists
+        #void testCheckRecordExists()
         #{
         #    Args        args    = new Args();
         #    UserInfo    record;
@@ -710,11 +795,11 @@ Formatversion: 1
         #    select firstOnly record;
         #    args.record(record);
         #
-        #    this.assertTrue(Args::checkTable(args, record.TableId));
+        #    this.assertTrue(Args::checkRecordExists(args, record.TableId));
         #}
       ENDSOURCE
-      SOURCE #testCheckTable_Empty
-        #void testCheckTable_Empty()
+      SOURCE #testCheckRecordExists_Empty
+        #void testCheckRecordExists_Empty()
         #{
         #    Args        args    = new Args();
         #    UserInfo    record;
@@ -722,33 +807,11 @@ Formatversion: 1
         #    //select firstOnly record;
         #    args.record(record);
         #
-        #    this.assertTrue(Args::checkTable(args, record.TableId));
+        #    this.assertFalse(Args::checkRecordExists(args, record.TableId));
         #}
       ENDSOURCE
-      SOURCE #testCheckTable_Map
-        #void testCheckTable_Map()
-        #{
-        #    Args            args    = new Args();
-        #    CustVendTrans   record  = CustTrans::find(0);
-        #;
-        #    args.record(record);
-        #
-        #    this.assertTrue(Args::checkTable(args, tablenum(CustTrans)));
-        #}
-      ENDSOURCE
-      SOURCE #testCheckTable_MapEmpty
-        #void testCheckTable_MapEmpty()
-        #{
-        #    Args            args    = new Args();
-        #    CustVendTrans   record;
-        #;
-        #    args.record(record);
-        #
-        #    this.assertFalse(Args::checkTable(args, tablenum(CustTrans)));
-        #}
-      ENDSOURCE
-      SOURCE #testCheckTable_NotMatch
-        #void testCheckTable_NotMatch()
+      SOURCE #testCheckRecordExists_NotMatch
+        #void testCheckRecordExists_NotMatch()
         #{
         #    Args        args    = new Args();
         #    UserInfo    record;
@@ -756,16 +819,275 @@ Formatversion: 1
         #    select firstOnly record;
         #    args.record(record);
         #
-        #    this.assertFalse(Args::checkTable(args, tablenum(UserGroupInfo)));
+        #    this.assertFalse(Args::checkRecordExists(args, tablenum(UserGroupInfo)));
         #}
       ENDSOURCE
-      SOURCE #testCheckTable_Null
-        #void testCheckTable_Null()
+      SOURCE #testCheckRecordExists_Null
+        #void testCheckRecordExists_Null()
         #{
         #    Args        args;
         #    UserInfo    record;
         #;
-        #    this.assertFalse(Args::checkTable(args, record.TableId));
+        #    this.assertFalse(Args::checkRecordExists(args, record.TableId));
+        #}
+      ENDSOURCE
+      SOURCE #testEnsureCallerFormName
+        #void testEnsureCallerFormName()
+        #{
+        #    Args        args            = new Args();
+        #
+        #    str         formName        = formstr(SysUserInfoPage);
+        #    FormRun     formRun         = classFactory.formRunClass(new Args(formName));
+        #;
+        #    args.caller(formRun);
+        #
+        #    this.parmExceptionExpected(false);
+        #    args.ensureCallerFormName(formName);
+        #}
+      ENDSOURCE
+      SOURCE #testEnsureCallerFormName_Empty
+        #void testEnsureCallerFormName_Empty()
+        #{
+        #    Args     args       = new Args();
+        #    str      formName   = formstr(SysUserInfoPage);
+        #;
+        #    this.parmExceptionExpected(true);
+        #    args.ensureCallerFormName(formName);
+        #}
+      ENDSOURCE
+      SOURCE #testEnsureCallerFormName_NotForm
+        #void testEnsureCallerFormName_NotForm()
+        #{
+        #    Args     args       = new Args();
+        #    str      formName   = formstr(SysUserInfoPage);
+        #;
+        #    args.caller(this);
+        #
+        #    this.parmExceptionExpected(true);
+        #    args.ensureCallerFormName(formName);
+        #}
+      ENDSOURCE
+      SOURCE #testEnsureCallerFormName_NotMatch
+        #void testEnsureCallerFormName_NotMatch()
+        #{
+        #    Args        args            = new Args();
+        #
+        #    str         formName        = formstr(SysUserInfoPage);
+        #    Args        formRunArgs     = new Args(formName);
+        #    FormRun     formRun         = classFactory.formRunClass(formRunArgs);
+        #;
+        #    args.caller(formRun);
+        #
+        #    this.parmExceptionExpected(true);
+        #    args.ensureCallerFormName(formstr(SysUserGroupInfo));
+        #}
+      ENDSOURCE
+      SOURCE #testEnsureCallerType
+        #void testEnsureCallerType()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.caller(this);
+        #
+        #    this.parmExceptionExpected(false);
+        #    args.ensureCallerType(classidget(this));
+        #}
+      ENDSOURCE
+      SOURCE #testEnsureCallerType_Ancestor
+        #void testEnsureCallerType_Ancestor()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.caller(this);
+        #
+        #    this.parmExceptionExpected(false);
+        #    args.ensureCallerType(classnum(SysTestAssert));
+        #}
+      ENDSOURCE
+      SOURCE #testEnsureCallerType_Empty
+        #void testEnsureCallerType_Empty()
+        #{
+        #    Args     args     = new Args();
+        #;
+        #    this.parmExceptionExpected(true);
+        #    args.ensureCallerType(classidget(this));
+        #}
+      ENDSOURCE
+      SOURCE #testEnsureCallerType_Interface
+        #void testEnsureCallerType_Interface()
+        #{
+        #    Args     args    = new Args();
+        #;
+        #    args.caller(this);
+        #
+        #    this.parmExceptionExpected(false);
+        #    args.ensureCallerType(classnum(SysTestable));
+        #}
+      ENDSOURCE
+      SOURCE #testEnsureCallerType_NotMatch
+        #void testEnsureCallerType_NotMatch()
+        #{
+        #    Args     args    = new Args();
+        #;
+        #    args.caller(this);
+        #
+        #    this.parmExceptionExpected(true);
+        #    args.ensureCallerType(classnum(FormRun));
+        #}
+      ENDSOURCE
+      SOURCE #testEnsureEnumType
+        #void testEnsureEnumType()
+        #{
+        #    Args     args = new Args();
+        #;
+        #    args.parmEnumType(enumnum(NoYes));
+        #
+        #    this.parmExceptionExpected(false);
+        #    args.ensureEnumType(enumnum(NoYes));
+        #}
+      ENDSOURCE
+      SOURCE #testEnsureEnumType_Empty
+        #void testEnsureEnumType_Empty()
+        #{
+        #    Args    args = new Args();
+        #;
+        #    this.parmExceptionExpected(true);
+        #    args.ensureEnumType(enumnum(NoYes));
+        #}
+      ENDSOURCE
+      SOURCE #testEnsureEnumType_NotMatch
+        #void testEnsureEnumType_NotMatch()
+        #{
+        #    Args    args = new Args();
+        #;
+        #    args.parmEnumType(enumnum(NoYes));
+        #
+        #    this.parmExceptionExpected(true);
+        #    args.ensureEnumType(enumnum(LedgerTransType));
+        #}
+      ENDSOURCE
+      SOURCE #testEnsureFormDatasource_Empty
+        #void testEnsureFormDatasource_Empty()
+        #{
+        #    Args    args = new Args();
+        #;
+        #    this.parmExceptionExpected(true);
+        #    args.ensureFormDatasource();
+        #}
+      ENDSOURCE
+      SOURCE #testEnsureFormDatasource_Fail
+        #void testEnsureFormDatasource_Fail()
+        #{
+        #    Args        args    = new Args();
+        #    UserInfo    record;
+        #;
+        #    select firstOnly record;
+        #    args.record(record);
+        #
+        #    this.parmExceptionExpected(true);
+        #    args.ensureFormDatasource();
+        #}
+      ENDSOURCE
+      SOURCE #testEnsureRecord
+        #void testEnsureRecord()
+        #{
+        #    Args        args    = new Args();
+        #    UserInfo    record;
+        #;
+        #    select firstOnly record;
+        #    args.record(record);
+        #
+        #    this.parmExceptionExpected(false);
+        #    args.ensureRecord(record.TableId);
+        #}
+      ENDSOURCE
+      SOURCE #testEnsureRecord_Empty
+        #void testEnsureRecord_Empty()
+        #{
+        #    Args        args    = new Args();
+        #    UserInfo    record;
+        #;
+        #    //select firstOnly record;
+        #    args.record(record);
+        #
+        #    this.parmExceptionExpected(false);
+        #    args.ensureRecord(record.TableId);
+        #}
+      ENDSOURCE
+      SOURCE #testEnsureRecord_Map
+        #void testEnsureRecord_Map()
+        #{
+        #    Args            args    = new Args();
+        #    CustVendTrans   record  = CustTrans::find(0);
+        #;
+        #    args.record(record);
+        #
+        #    this.parmExceptionExpected(false);
+        #    args.ensureRecord(tablenum(CustTrans));
+        #}
+      ENDSOURCE
+      SOURCE #testEnsureRecord_MapEmpty
+        #void testEnsureRecord_MapEmpty()
+        #{
+        #    Args            args    = new Args();
+        #    CustVendTrans   record;
+        #;
+        #    args.record(record);
+        #
+        #    this.parmExceptionExpected(true);
+        #    args.ensureRecord(tablenum(CustTrans));
+        #}
+      ENDSOURCE
+      SOURCE #testEnsureRecord_NotMatch
+        #void testEnsureRecord_NotMatch()
+        #{
+        #    Args        args    = new Args();
+        #    UserInfo    record;
+        #;
+        #    select firstOnly record;
+        #    args.record(record);
+        #
+        #    this.parmExceptionExpected(true);
+        #    args.ensureRecord(tablenum(UserGroupInfo));
+        #}
+      ENDSOURCE
+      SOURCE #testEnsureRecordExists
+        #void testEnsureRecordExists()
+        #{
+        #    Args        args    = new Args();
+        #    UserInfo    record;
+        #;
+        #    select firstOnly record;
+        #    args.record(record);
+        #
+        #    this.parmExceptionExpected(false);
+        #    args.ensureRecordExists(record.TableId);
+        #}
+      ENDSOURCE
+      SOURCE #testEnsureRecordExists_Empty
+        #void testEnsureRecordExists_Empty()
+        #{
+        #    Args        args    = new Args();
+        #    UserInfo    record;
+        #;
+        #    //select firstOnly record;
+        #    args.record(record);
+        #
+        #    this.parmExceptionExpected(true);
+        #    args.ensureRecordExists(record.TableId);
+        #}
+      ENDSOURCE
+      SOURCE #testEnsureRecordExists_NotMatch
+        #void testEnsureRecordExists_NotMatch()
+        #{
+        #    Args        args    = new Args();
+        #    UserInfo    record;
+        #;
+        #    select firstOnly record;
+        #    args.record(record);
+        #
+        #    this.parmExceptionExpected(true);
+        #    args.ensureRecordExists(tablenum(UserGroupInfo));
         #}
       ENDSOURCE
       SOURCE #testGetEnum
@@ -912,7 +1234,7 @@ Formatversion: 1
   SHARED
   PROPERTIES
     Name                #SysArgs
-    Origin              #{F37D0016-078D-496E-ACE8-C181C601D99D}
+    Origin              #{E8A5063F-D6DC-40AD-B5E4-5A8E9D0BDFC4}
   ENDPROPERTIES
   
     PROJECTCLASS ProjectNode
@@ -926,7 +1248,7 @@ Formatversion: 1
     BEGINNODE
       FILETYPE 0
       UTILTYPE 45
-      UTILOBJECTID 50251
+      UTILOBJECTID 1040837
       NODETYPE 329
       NAME #ArgsTest
     ENDNODE
