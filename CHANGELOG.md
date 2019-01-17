@@ -2,7 +2,7 @@
 
 see also [Releases on GitHub](https://github.com/mazzy-ax/SysArgs/releases)
 
-## [0.2.0](https://github.com/mazzy-ax/xpoTools/compare/0.1.0...0.2.0) - 2019-01-16
+## [0.2.0](https://github.com/mazzy-ax/SysArgs/compare/0.1.0...0.2.0) - 2019-01-16
 
 ### Добавлено
 
