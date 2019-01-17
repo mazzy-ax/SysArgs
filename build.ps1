@@ -3,7 +3,7 @@
 #Requires -Version 5
 #Requires -module @{ ModuleName="xpoTools"; ModuleVersion="1.2.0" }
 
-Import-Xpo ax2009\*.xpo, ax2012\*.xpo, ax3\*.xpo, ax4\*.xpo -ErrorAction SilentlyContinue | ForEach-Object {
+Get-ChildItem ax2009, ax2012, ax3, ax4 -filter '*.xpo' -ErrorAction SilentlyContinue | Import-Xpo | ForEach-Object {
     Split-xpo -Item $_ -Destination $_.SourceFile.DirectoryName -Exclude SharedProject_*.xpo -xpp -PathStyle mazzy -PassThru
 }
 
