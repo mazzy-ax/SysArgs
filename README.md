@@ -8,7 +8,7 @@
 * [Get методы](https://github.com/mazzy-ax/SysArgs/wiki/Get-methods) возвращают требуемое значение или бросают исключение
 * [Check методы](https://github.com/mazzy-ax/SysArgs/wiki/Check-methods) возвращают `boolean`, не бросают исключений
 * [Assert методы](https://github.com/mazzy-ax/SysArgs/wiki/Assert-methods) ничего не возвращают. Бросают исключение, если args не инициализирован или в аргументах не подходящие параметры. Статические методы.
-* [Ensure методы](https://github.com/mazzy-ax/SysArgs/wiki/Ensure-methods) ничего не возвращают. Бросают исключение, если в аргументах не подходящие параметры. Методы объекта. Особенно удобны в ax2012 при инициализации переменных.
+* [Ensure методы](https://github.com/mazzy-ax/SysArgs/wiki/Ensure-methods) возвращают сам args. Бросают исключение, если в аргументах не подходящие параметры. Методы объекта. Особенно удобны в ax2012 при инициализации переменных.
 
 Подробнее в [wiki](https://github.com/mazzy-ax/SysArgs/wiki) проекта.
 
