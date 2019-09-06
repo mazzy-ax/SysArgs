@@ -34,7 +34,7 @@ else
 Стало:
 
 ```java
-SysArgs::assertCallerType(args, classnum(FormRun)); // пропустит дальше, только если вызвали из формы. Иначе бросит исключение.
+SysArgs::assertCallerType(args, classnum(FormRun)); // пропустит дальше, если вызвали из формы. Иначе бросит исключение.
 if( SysArgs::checkRecord(args, tablenum(ProdTable)) )
 {
     ...
