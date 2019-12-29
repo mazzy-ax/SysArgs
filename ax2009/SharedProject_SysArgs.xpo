@@ -36,6 +36,16 @@ Formatversion: 1
         #    return this;
         #}
       ENDSOURCE
+      SOURCE #ensureEnum
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public SysArgs ensureEnum(Anytype enum, str _funcname = '')
+        #{;
+        #    SysArgs::assertEnum(this, enum, _funcname ? _funcname : funcname());
+        #    return this;
+        #}
+      ENDSOURCE
       SOURCE #ensureEnumType
         #//
         #// mazzy, https://github.com/mazzy-ax/SysArgs
@@ -56,6 +66,16 @@ Formatversion: 1
         #    return this;
         #}
       ENDSOURCE
+      SOURCE #ensureParm
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public SysArgs ensureParm(str matchPattern = '.', str _funcname = '')
+        #{;
+        #    SysArgs::assertParm(this, matchPattern, _funcname ? _funcname : funcname());
+        #    return this;
+        #}
+      ENDSOURCE
       SOURCE #ensureRecord
         #//
         #// mazzy, https://github.com/mazzy-ax/SysArgs
@@ -73,6 +93,16 @@ Formatversion: 1
         #public SysArgs ensureRecordExists(TableId tableId = 0, str _funcname = '')
         #{;
         #    SysArgs::assertRecordExists(this, tableId, _funcname ? _funcname : funcname());
+        #    return this;
+        #}
+      ENDSOURCE
+      SOURCE #ensureRecordTableIds
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public SysArgs ensureRecordTableIds(container tableIds, str _funcname = '')
+        #{;
+        #    SysArgs::assertRecordTableIds(this, tableIds, _funcname ? _funcname : funcname());
         #    return this;
         #}
       ENDSOURCE
@@ -100,6 +130,18 @@ Formatversion: 1
         #    throw error(Error::wrongUseOfFunction(_funcname ? _funcname : funcname()));
         #}
       ENDSOURCE
+      SOURCE #assertEnum
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public static void assertEnum(Args args, Anytype enum, str _funcname = '')
+        #{
+        #    if ( SysArgs::checkEnum(args, enum) )
+        #        return;
+        #
+        #    throw error(Error::missingRecord(_funcname ? _funcname : funcname()));
+        #}
+      ENDSOURCE
       SOURCE #assertEnumType
         #//
         #// mazzy, https://github.com/mazzy-ax/SysArgs
@@ -118,10 +160,22 @@ Formatversion: 1
         #//
         #public static void assertFormDatasource(Args args, str _funcname = '')
         #{
-        #    if (args && args.record() && args.record().isFormDataSource())
+        #    if (SysArgs::checkFormDatasource(args))
         #        return;
         #
         #    throw error(Error::wrongUseOfFunction(_funcname ? _funcname : funcname()));
+        #}
+      ENDSOURCE
+      SOURCE #assertParm
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public static void assertParm(Args args, str matchPattern = '.', str _funcname = '')
+        #{
+        #    if ( SysArgs::checkParm(args, matchPattern) )
+        #        return;
+        #
+        #    throw error(Error::missingRecord(_funcname ? _funcname : funcname()));
         #}
       ENDSOURCE
       SOURCE #assertRecord
@@ -148,6 +202,18 @@ Formatversion: 1
         #    throw error(Error::missingRecord(_funcname ? _funcname : funcname()));
         #}
       ENDSOURCE
+      SOURCE #assertRecordTableIds
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public static void assertRecordTableIds(Args args, container tableIds, str _funcname = '')
+        #{
+        #    if ( SysArgs::checkRecordTableIds(args, tableIds) )
+        #        return;
+        #
+        #    throw error(Error::missingRecord(_funcname ? _funcname : funcname()));
+        #}
+      ENDSOURCE
       SOURCE #checkCallerType
         #//
         #// mazzy, https://github.com/mazzy-ax/SysArgs
@@ -160,6 +226,23 @@ Formatversion: 1
         #    return checkOk;
         #}
       ENDSOURCE
+      SOURCE #checkEnum
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public static boolean checkEnum(Args args, Anytype enum)
+        #{
+        #    boolean checkOk = (args != null);
+        #
+        #    if( checkOk && typeof(enum) == types::Enum)
+        #    {
+        #        checkOk = (enum == args.parmEnum());
+        #    }
+        #
+        #    return checkOk;
+        #}
+        #
+      ENDSOURCE
       SOURCE #checkEnumType
         #//
         #// mazzy, https://github.com/mazzy-ax/SysArgs
@@ -171,6 +254,34 @@ Formatversion: 1
         #    return checkOk;
         #}
       ENDSOURCE
+      SOURCE #checkFormDatasource
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public static boolean checkFormDatasource(Args args)
+        #{
+        #    if (args && args.dataset() && args.record().isFormDataSource())
+        #        return true;
+        #
+        #    return false;
+        #}
+      ENDSOURCE
+      SOURCE #checkParm
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #// параметр parm содержит паттерн.
+        #// возвращает true, если parm-строка соответствует regexp-выражению в matchPattern (метод использует функцию match для проверки)
+        #// если не указать matchPattern, то возвращает true, если parm не пустой (содержит хотя бы один символ)
+        #// возвращает true, если matchPattern является пустой строкой
+        #public static boolean checkParm(Args args, str matchPattern = '.')
+        #{
+        #    boolean checkOk = (args && match(matchPattern, args.parm()));
+        #
+        #    return checkOk;
+        #}
+        #
+      ENDSOURCE
       SOURCE #checkRecord
         #//
         #// mazzy, https://github.com/mazzy-ax/SysArgs
@@ -179,10 +290,12 @@ Formatversion: 1
         #public static boolean checkRecord(Args args, TableId tableId = 0)
         #{
         #    boolean checkOk = (args != null);
+        #    int     dataset;
         #
         #    if( checkOk && tableId )
         #    {
-        #        checkOk = args.dataset() == tableId;
+        #        dataset = args.dataset();
+        #        checkOk = dataset == tableId;
         #    }
         #
         #    return checkOk;
@@ -196,6 +309,29 @@ Formatversion: 1
         #public static boolean checkRecordExists(Args args, TableId tableId = 0)
         #{
         #    boolean checkOk = (SysArgs::checkRecord(args, tableId) && args.record() && args.record().RecId != 0);
+        #
+        #    return checkOk;
+        #}
+      ENDSOURCE
+      SOURCE #checkRecordTableIds
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #// возвращает true, если:
+        #// * контейнер содержит tableId, совпадающий с tableId таблицы
+        #// * контейнер содержит 0
+        #// * контейнер пустой
+        #// возвращает false в остальных случаях
+        #public static boolean checkRecordTableIds(Args args, container tableIds)
+        #{
+        #    boolean checkOk = (args != null);
+        #    int     dataset;
+        #
+        #    if( checkOk && tableIds )
+        #    {
+        #        dataset = args.dataset();
+        #        checkOk = confind(tableIds, dataset) || confind(tableIds, 0);
+        #    }
         #
         #    return checkOk;
         #}
@@ -722,6 +858,108 @@ Formatversion: 1
         #    this.assertFalse(SysArgs::checkEnumType(args, enumnum(NoYes)));
         #}
       ENDSOURCE
+      SOURCE #testCheckFormDatasource_Empty
+        #void testCheckFormDatasource_Empty()
+        #{
+        #    Args        args    = new Args();
+        #;
+        #    this.assertFalse(SysArgs::checkFormDatasource(args));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckFormDatasource_Fail
+        #void testCheckFormDatasource_Fail()
+        #{
+        #    Args        args    = new Args();
+        #    UserInfo    record;
+        #;
+        #    select firstOnly record;
+        #    args.record(record);
+        #
+        #    this.assertFalse(SysArgs::checkFormDatasource(args));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckFormDatasource_Null
+        #void testCheckFormDatasource_Null()
+        #{
+        #    this.assertFalse(SysArgs::checkFormDatasource(null));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckParm
+        #void testCheckParm()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.parm('something');
+        #
+        #    this.assertTrue(SysArgs::checkParm(args,'something'));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckParm_Empty_Pattern
+        #void testCheckParm_Empty_Pattern()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    this.assertFalse(SysArgs::checkParm(args,'<:a+>'));
+        #    this.assertFalse(SysArgs::checkParm(args,':d'));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckParm_Empty_PatternEmpty
+        #void testCheckParm_Empty_PatternEmpty()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    this.assertTrue(SysArgs::checkParm(args,''));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckParm_EmptyPatternDefault
+        #void testCheckParm_EmptyPatternDefault()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    this.assertFalse(SysArgs::checkParm(args));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckParm_Fail
+        #void testCheckParm_Fail()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.parm('something');
+        #
+        #    this.assertFalse(SysArgs::checkParm(args,'another'));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckParm_Pattern
+        #void testCheckParm_Pattern()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.parm('something');
+        #
+        #    this.assertTrue(SysArgs::checkParm(args,'<:a+>'));
+        #    this.assertFalse(SysArgs::checkParm(args,':d'));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckParm_PatternDefault
+        #void testCheckParm_PatternDefault()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.parm('something');
+        #
+        #    this.assertTrue(SysArgs::checkParm(args));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckParm_PatternEmpty
+        #void testCheckParm_PatternEmpty()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.parm('something');
+        #
+        #    this.assertTrue(SysArgs::checkParm(args,''));
+        #}
+      ENDSOURCE
       SOURCE #testCheckRecord
         #void testCheckRecord()
         #{
@@ -1011,6 +1249,13 @@ Formatversion: 1
         #    sysArgs.ensureFormDatasource();
         #}
       ENDSOURCE
+      SOURCE #testEnsureFormDatasource_Null
+        #void testEnsureFormDatasource_Null()
+        #{
+        #    this.parmExceptionExpected(true);
+        #    SysArgs::assertFormDatasource(null);
+        #}
+      ENDSOURCE
       SOURCE #testEnsureRecord
         #void testEnsureRecord()
         #{
@@ -1286,7 +1531,7 @@ Formatversion: 1
     BEGINNODE
       FILETYPE 0
       UTILTYPE 45
-      UTILOBJECTID 50251
+      UTILOBJECTID 50254
       NODETYPE 329
       NAME #SysArgsTest
     ENDNODE

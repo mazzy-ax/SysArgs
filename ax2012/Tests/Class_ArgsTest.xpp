@@ -1,5 +1,5 @@
 ﻿//
-// mazzy, https://github.com/mazzy-ax/Args
+// mazzy, https://github.com/mazzy-ax/SysArgs
 //
 
 // not yet implemented
@@ -12,7 +12,7 @@ class ArgsTest extends SysTestCase
     {
         Args        args            = new Args();
 
-        str         formName        = formstr(SysUserInfoPage);
+        str         formName        = formstr(SysUserInfoDetail);
         Args        formRunArgs     = new Args(formName);
         FormRun     formRun         = classFactory.formRunClass(formRunArgs);
     ;
@@ -25,7 +25,7 @@ class ArgsTest extends SysTestCase
     void testAssertCallerFormName_Empty()
     {
         Args    args        = new Args();
-        str     formName    = formstr(SysUserInfoPage);
+        str     formName    = formstr(SysUserInfoDetail);
     ;
         this.parmExceptionExpected(true);
         Args::assertCallerFormName(args, formName);
@@ -34,7 +34,7 @@ class ArgsTest extends SysTestCase
     void testAssertCallerFormName_NotForm()
     {
         Args    args        = new Args();
-        str     formName    = formstr(SysUserInfoPage);
+        str     formName    = formstr(SysUserInfoDetail);
     ;
         args.caller(this);
 
@@ -46,7 +46,7 @@ class ArgsTest extends SysTestCase
     {
         Args        args            = new Args();
 
-        str         formName        = formstr(SysUserInfoPage);
+        str         formName        = formstr(SysUserInfoDetail);
         Args        formRunArgs     = new Args(formName);
         FormRun     formRun         = classFactory.formRunClass(formRunArgs);
     ;
@@ -59,7 +59,7 @@ class ArgsTest extends SysTestCase
     void testAssertCallerFormName_Null()
     {
         Args    args;
-        str     formName    = formstr(SysUserInfoPage);
+        str     formName    = formstr(SysUserInfoDetail);
     ;
         this.parmExceptionExpected(true);
         Args::assertCallerFormName(args, formName);
@@ -377,6 +377,97 @@ class ArgsTest extends SysTestCase
         this.assertFalse(Args::checkEnumType(args, enumnum(NoYes)));
     }
 
+    void testCheckFormDatasource_Empty()
+    {
+        Args        args    = new Args();
+    ;
+        this.assertFalse(Args::checkFormDatasource(args));
+    }
+
+    void testCheckFormDatasource_Fail()
+    {
+        Args        args    = new Args();
+        UserInfo    record;
+    ;
+        select firstOnly record;
+        args.record(record);
+
+        this.assertFalse(Args::checkFormDatasource(args));
+    }
+
+    void testCheckFormDatasource_Null()
+    {
+        this.assertFalse(Args::checkFormDatasource(null));
+    }
+
+    void testCheckParm()
+    {
+        Args    args    = new Args();
+    ;
+        args.parm('something');
+
+        this.assertTrue(Args::checkParm(args,'something'));
+    }
+
+    void testCheckParm_Empty_Pattern()
+    {
+        Args    args    = new Args();
+    ;
+        this.assertFalse(Args::checkParm(args,'<:a+>'));
+        this.assertFalse(Args::checkParm(args,':d'));
+    }
+
+    void testCheckParm_Empty_PatternEmpty()
+    {
+        Args    args    = new Args();
+    ;
+        this.assertTrue(Args::checkParm(args,''));
+    }
+
+    void testCheckParm_EmptyPatternDefault()
+    {
+        Args    args    = new Args();
+    ;
+        this.assertFalse(Args::checkParm(args));
+    }
+
+    void testCheckParm_Fail()
+    {
+        Args    args    = new Args();
+    ;
+        args.parm('something');
+
+        this.assertFalse(Args::checkParm(args,'another'));
+    }
+
+    void testCheckParm_Pattern()
+    {
+        Args    args    = new Args();
+    ;
+        args.parm('something');
+
+        this.assertTrue(Args::checkParm(args,'<:a+>'));
+        this.assertFalse(Args::checkParm(args,':d'));
+    }
+
+    void testCheckParm_PatternDefault()
+    {
+        Args    args    = new Args();
+    ;
+        args.parm('something');
+
+        this.assertTrue(Args::checkParm(args));
+    }
+
+    void testCheckParm_PatternEmpty()
+    {
+        Args    args    = new Args();
+    ;
+        args.parm('something');
+
+        this.assertTrue(Args::checkParm(args,''));
+    }
+
     void testCheckRecord()
     {
         Args        args    = new Args();
@@ -483,7 +574,7 @@ class ArgsTest extends SysTestCase
     {
         Args        args            = new Args();
 
-        str         formName        = formstr(SysUserInfoPage);
+        str         formName        = formstr(SysUserInfoDetail);
         FormRun     formRun         = classFactory.formRunClass(new Args(formName));
     ;
         args.caller(formRun);
@@ -494,8 +585,8 @@ class ArgsTest extends SysTestCase
 
     void testEnsureCallerFormName_Empty()
     {
-        Args     args       = new Args();
-        str      formName   = formstr(SysUserInfoPage);
+        str     formName    = formstr(SysUserInfoDetail);
+        Args    args        = new Args();
     ;
         this.parmExceptionExpected(true);
         args.ensureCallerFormName(formName);
@@ -503,27 +594,27 @@ class ArgsTest extends SysTestCase
 
     void testEnsureCallerFormName_NotForm()
     {
-        Args     args       = new Args();
-        str      formName   = formstr(SysUserInfoPage);
+        Args        args        = new Args();
+        str         formName    = formstr(SysUserInfoDetail);
     ;
         args.caller(this);
 
         this.parmExceptionExpected(true);
-        args.ensureCallerFormName(formName);
+        Args.ensureCallerFormName(formName);
     }
 
     void testEnsureCallerFormName_NotMatch()
     {
         Args        args            = new Args();
 
-        str         formName        = formstr(SysUserInfoPage);
+        str         formName        = formstr(SysUserInfoDetail);
         Args        formRunArgs     = new Args(formName);
         FormRun     formRun         = classFactory.formRunClass(formRunArgs);
     ;
         args.caller(formRun);
 
         this.parmExceptionExpected(true);
-        args.ensureCallerFormName(formstr(SysUserGroupInfo));
+        Args.ensureCallerFormName(formstr(SysUserGroupInfo));
     }
 
     void testEnsureCallerType()
@@ -533,81 +624,81 @@ class ArgsTest extends SysTestCase
         args.caller(this);
 
         this.parmExceptionExpected(false);
-        args.ensureCallerType(classidget(this));
+        Args.ensureCallerType(classidget(this));
     }
 
     void testEnsureCallerType_Ancestor()
     {
-        Args    args    = new Args();
+        Args     args    = new Args();
     ;
         args.caller(this);
 
         this.parmExceptionExpected(false);
-        args.ensureCallerType(classnum(SysTestAssert));
+        Args.ensureCallerType(classnum(SysTestAssert));
     }
 
     void testEnsureCallerType_Empty()
     {
-        Args     args     = new Args();
+        Args     Args     = new Args();
     ;
         this.parmExceptionExpected(true);
-        args.ensureCallerType(classidget(this));
+        Args.ensureCallerType(classidget(this));
     }
 
     void testEnsureCallerType_Interface()
     {
-        Args     args    = new Args();
-    ;
+        Args    args    = new Args();
+
         args.caller(this);
 
         this.parmExceptionExpected(false);
-        args.ensureCallerType(classnum(SysTestable));
+        Args.ensureCallerType(classnum(SysTestable));
     }
 
     void testEnsureCallerType_NotMatch()
     {
-        Args     args    = new Args();
+        Args        args    = new Args();
     ;
         args.caller(this);
 
         this.parmExceptionExpected(true);
-        args.ensureCallerType(classnum(FormRun));
+        Args.ensureCallerType(classnum(FormRun));
     }
 
     void testEnsureEnumType()
     {
-        Args     args = new Args();
+        Args        args    = new Args();
     ;
         args.parmEnumType(enumnum(NoYes));
 
         this.parmExceptionExpected(false);
-        args.ensureEnumType(enumnum(NoYes));
+        Args.ensureEnumType(enumnum(NoYes));
     }
 
     void testEnsureEnumType_Empty()
     {
-        Args    args = new Args();
+        Args     Args = new Args();
     ;
         this.parmExceptionExpected(true);
-        args.ensureEnumType(enumnum(NoYes));
+        Args.ensureEnumType(enumnum(NoYes));
     }
 
     void testEnsureEnumType_NotMatch()
     {
-        Args    args = new Args();
+        Args        args    = new Args();
     ;
         args.parmEnumType(enumnum(NoYes));
 
         this.parmExceptionExpected(true);
-        args.ensureEnumType(enumnum(LedgerTransType));
+        Args.ensureEnumType(enumnum(LedgerTransType));
     }
 
     void testEnsureFormDatasource_Empty()
     {
-        Args    args = new Args();
+        Args     Args = new Args();
     ;
         this.parmExceptionExpected(true);
-        args.ensureFormDatasource();
+        Args.ensureFormDatasource();
     }
 
     void testEnsureFormDatasource_Fail()
@@ -620,6 +711,12 @@ class ArgsTest extends SysTestCase
 
         this.parmExceptionExpected(true);
         args.ensureFormDatasource();
+    }
+
+    void testEnsureFormDatasource_Null()
+    {
+        this.parmExceptionExpected(true);
+        Args::assertFormDatasource(null);
     }
 
     void testEnsureRecord()
@@ -643,7 +740,7 @@ class ArgsTest extends SysTestCase
         args.record(record);
 
         this.parmExceptionExpected(false);
-        args.ensureRecord(record.TableId);
+        Args.ensureRecord(record.TableId);
     }
 
     void testEnsureRecord_Map()
@@ -654,7 +751,7 @@ class ArgsTest extends SysTestCase
         args.record(record);
 
         this.parmExceptionExpected(false);
-        args.ensureRecord(tablenum(CustTrans));
+        Args.ensureRecord(tablenum(CustTrans));
     }
 
     void testEnsureRecord_MapEmpty()
@@ -665,7 +762,7 @@ class ArgsTest extends SysTestCase
         args.record(record);
 
         this.parmExceptionExpected(true);
-        args.ensureRecord(tablenum(CustTrans));
+        Args.ensureRecord(tablenum(CustTrans));
     }
 
     void testEnsureRecord_NotMatch()
@@ -677,7 +774,7 @@ class ArgsTest extends SysTestCase
         args.record(record);
 
         this.parmExceptionExpected(true);
-        args.ensureRecord(tablenum(UserGroupInfo));
+        Args.ensureRecord(tablenum(UserGroupInfo));
     }
 
     void testEnsureRecordExists()
@@ -689,7 +786,7 @@ class ArgsTest extends SysTestCase
         args.record(record);
 
         this.parmExceptionExpected(false);
-        args.ensureRecordExists(record.TableId);
+        Args.ensureRecordExists(record.TableId);
     }
 
     void testEnsureRecordExists_Empty()
@@ -701,7 +798,7 @@ class ArgsTest extends SysTestCase
         args.record(record);
 
         this.parmExceptionExpected(true);
-        args.ensureRecordExists(record.TableId);
+        Args.ensureRecordExists(record.TableId);
     }
 
     void testEnsureRecordExists_NotMatch()
@@ -713,7 +810,7 @@ class ArgsTest extends SysTestCase
         args.record(record);
 
         this.parmExceptionExpected(true);
-        args.ensureRecordExists(tablenum(UserGroupInfo));
+        Args.ensureRecordExists(tablenum(UserGroupInfo));
     }
 
     void testGetEnum()

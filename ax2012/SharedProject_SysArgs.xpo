@@ -17,7 +17,7 @@ Formatversion: 1
     METHODS
       SOURCE #ensureCallerFormName
         #//
-        #// mazzy, https://github.com/mazzy-ax/Args
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
         #//
         #public Args ensureCallerFormName(FormName formName, str _funcname = '')
         #{;
@@ -27,7 +27,7 @@ Formatversion: 1
       ENDSOURCE
       SOURCE #ensureCallerType
         #//
-        #// mazzy, https://github.com/mazzy-ax/Args
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
         #//
         #public Args ensureCallerType(classId  potentialAncestorClassId, str _funcname = '')
         #{;
@@ -35,9 +35,19 @@ Formatversion: 1
         #    return this;
         #}
       ENDSOURCE
+      SOURCE #ensureEnum
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public Args ensureEnum(Anytype enum, str _funcname = '')
+        #{;
+        #    Args::assertEnum(this, enum, _funcname ? _funcname : funcname());
+        #    return this;
+        #}
+      ENDSOURCE
       SOURCE #ensureEnumType
         #//
-        #// mazzy, https://github.com/mazzy-ax/Args
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
         #//
         #public Args ensureEnumType(EnumId enumId, str _funcname = '')
         #{;
@@ -47,7 +57,7 @@ Formatversion: 1
       ENDSOURCE
       SOURCE #ensureFormDatasource
         #//
-        #// mazzy, https://github.com/mazzy-ax/Args
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
         #//
         #public Args ensureFormDatasource(str _funcname = '')
         #{;
@@ -55,9 +65,19 @@ Formatversion: 1
         #    return this;
         #}
       ENDSOURCE
+      SOURCE #ensureParm
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public Args ensureParm(str matchPattern = '.', str _funcname = '')
+        #{;
+        #    Args::assertParm(this, matchPattern, _funcname ? _funcname : funcname());
+        #    return this;
+        #}
+      ENDSOURCE
       SOURCE #ensureRecord
         #//
-        #// mazzy, https://github.com/mazzy-ax/Args
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
         #//
         #public Args ensureRecord(TableId tableId = 0, str _funcname = '')
         #{;
@@ -67,7 +87,7 @@ Formatversion: 1
       ENDSOURCE
       SOURCE #ensureRecordExists
         #//
-        #// mazzy, https://github.com/mazzy-ax/Args
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
         #//
         #public Args ensureRecordExists(TableId tableId = 0, str _funcname = '')
         #{;
@@ -75,9 +95,19 @@ Formatversion: 1
         #    return this;
         #}
       ENDSOURCE
+      SOURCE #ensureRecordTableIds
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public Args ensureRecordTableIds(container tableIds, str _funcname = '')
+        #{;
+        #    Args::assertRecordTableIds(this, tableIds, _funcname ? _funcname : funcname());
+        #    return this;
+        #}
+      ENDSOURCE
       SOURCE #assertCallerFormName
         #//
-        #// mazzy, https://github.com/mazzy-ax/Args
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
         #//
         #public static void assertCallerFormName(Args args, FormName formName, str _funcname = '')
         #{
@@ -89,7 +119,7 @@ Formatversion: 1
       ENDSOURCE
       SOURCE #assertCallerType
         #//
-        #// mazzy, https://github.com/mazzy-ax/Args
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
         #//
         #public static void assertCallerType(Args args, classId  potentialAncestorClassId, str _funcname = '')
         #{
@@ -99,9 +129,21 @@ Formatversion: 1
         #    throw error(Error::wrongUseOfFunction(_funcname ? _funcname : funcname()));
         #}
       ENDSOURCE
+      SOURCE #assertEnum
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public static void assertEnum(Args args, Anytype enum, str _funcname = '')
+        #{
+        #    if ( Args::checkEnum(args, enum) )
+        #        return;
+        #
+        #    throw error(Error::missingRecord(_funcname ? _funcname : funcname()));
+        #}
+      ENDSOURCE
       SOURCE #assertEnumType
         #//
-        #// mazzy, https://github.com/mazzy-ax/Args
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
         #//
         #public static void assertEnumType(Args args, EnumId enumId, str _funcname = '')
         #{
@@ -113,19 +155,31 @@ Formatversion: 1
       ENDSOURCE
       SOURCE #assertFormDatasource
         #//
-        #// mazzy, https://github.com/mazzy-ax/Args
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
         #//
         #public static void assertFormDatasource(Args args, str _funcname = '')
         #{
-        #    if (args && args.record() && args.record().isFormDataSource())
+        #    if (Args::checkFormDatasource(args))
         #        return;
         #
         #    throw error(Error::wrongUseOfFunction(_funcname ? _funcname : funcname()));
         #}
       ENDSOURCE
+      SOURCE #assertParm
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public static void assertParm(Args args, str matchPattern = '.', str _funcname = '')
+        #{
+        #    if ( Args::checkParm(args, matchPattern) )
+        #        return;
+        #
+        #    throw error(Error::missingRecord(_funcname ? _funcname : funcname()));
+        #}
+      ENDSOURCE
       SOURCE #assertRecord
         #//
-        #// mazzy, https://github.com/mazzy-ax/Args
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
         #//
         #public static void assertRecord(Args args, TableId tableId = 0, str _funcname = '')
         #{
@@ -137,7 +191,7 @@ Formatversion: 1
       ENDSOURCE
       SOURCE #assertRecordExists
         #//
-        #// mazzy, https://github.com/mazzy-ax/Args
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
         #//
         #public static void assertRecordExists(Args args, TableId tableId = 0, str _funcname = '')
         #{
@@ -147,20 +201,50 @@ Formatversion: 1
         #    throw error(Error::missingRecord(_funcname ? _funcname : funcname()));
         #}
       ENDSOURCE
+      SOURCE #assertRecordTableIds
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public static void assertRecordTableIds(Args args, container tableIds, str _funcname = '')
+        #{
+        #    if ( Args::checkRecordTableIds(args, tableIds) )
+        #        return;
+        #
+        #    throw error(Error::missingRecord(_funcname ? _funcname : funcname()));
+        #}
+      ENDSOURCE
       SOURCE #checkCallerType
         #//
-        #// mazzy, https://github.com/mazzy-ax/Args
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
         #//
         #public static boolean checkCallerType(Args args, classId  potentialAncestorClassId)
         #{
-        #    boolean checkOk = args  && args.caller() && SysDictClass::is(args.caller(), potentialAncestorClassId);
+        #    boolean checkOk = args && args.caller() && SysDictClass::is(args.caller(), potentialAncestorClassId);
+        #    ;
         #
         #    return checkOk;
         #}
       ENDSOURCE
+      SOURCE #checkEnum
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public static boolean checkEnum(Args args, Anytype enum)
+        #{
+        #    boolean checkOk = (args != null);
+        #
+        #    if( checkOk && typeof(enum) == types::Enum)
+        #    {
+        #        checkOk = (enum == args.parmEnum());
+        #    }
+        #
+        #    return checkOk;
+        #}
+        #
+      ENDSOURCE
       SOURCE #checkEnumType
         #//
-        #// mazzy, https://github.com/mazzy-ax/Args
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
         #//
         #public static boolean checkEnumType(Args args, EnumId enumId)
         #{
@@ -169,18 +253,48 @@ Formatversion: 1
         #    return checkOk;
         #}
       ENDSOURCE
+      SOURCE #checkFormDatasource
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #public static boolean checkFormDatasource(Args args)
+        #{
+        #    if (args && args.dataset() && args.record().isFormDataSource())
+        #        return true;
+        #
+        #    return false;
+        #}
+      ENDSOURCE
+      SOURCE #checkParm
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #// параметр parm содержит паттерн.
+        #// возвращает true, если parm-строка соответствует regexp-выражению в matchPattern (метод использует функцию match для проверки)
+        #// если не указать matchPattern, то возвращает true, если parm не пустой (содержит хотя бы один символ)
+        #// возвращает true, если matchPattern является пустой строкой
+        #public static boolean checkParm(Args args, str matchPattern = '.')
+        #{
+        #    boolean checkOk = (args && match(matchPattern, args.parm()));
+        #
+        #    return checkOk;
+        #}
+        #
+      ENDSOURCE
       SOURCE #checkRecord
         #//
-        #// mazzy, https://github.com/mazzy-ax/Args
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
         #//
         #// запись из указанной таблицы (или любой таблицы для tableId = 0)
         #public static boolean checkRecord(Args args, TableId tableId = 0)
         #{
         #    boolean checkOk = (args != null);
+        #    int     dataset;
         #
         #    if( checkOk && tableId )
         #    {
-        #        checkOk = args.dataset() == tableId;
+        #        dataset = args.dataset();
+        #        checkOk = dataset == tableId;
         #    }
         #
         #    return checkOk;
@@ -188,7 +302,7 @@ Formatversion: 1
       ENDSOURCE
       SOURCE #checkRecordExists
         #//
-        #// mazzy, https://github.com/mazzy-ax/Args
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
         #//
         #// запись существует (recId != 0) и запись из указанной таблицы (или любой таблицы для tableId = 0)
         #public static boolean checkRecordExists(Args args, TableId tableId = 0)
@@ -198,9 +312,32 @@ Formatversion: 1
         #    return checkOk;
         #}
       ENDSOURCE
+      SOURCE #checkRecordTableIds
+        #//
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
+        #//
+        #// возвращает true, если:
+        #// * контейнер содержит tableId, совпадающий с tableId таблицы
+        #// * контейнер содержит 0
+        #// * контейнер пустой
+        #// возвращает false в остальных случаях
+        #public static boolean checkRecordTableIds(Args args, container tableIds)
+        #{
+        #    boolean checkOk = (args != null);
+        #    int     dataset;
+        #
+        #    if( checkOk && tableIds )
+        #    {
+        #        dataset = args.dataset();
+        #        checkOk = confind(tableIds, dataset) || confind(tableIds, 0);
+        #    }
+        #
+        #    return checkOk;
+        #}
+      ENDSOURCE
       SOURCE #getCallerFormName
         #//
-        #// mazzy, https://github.com/mazzy-ax/Args
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
         #//
         #public static str getCallerFormName(Args args)
         #{
@@ -214,7 +351,7 @@ Formatversion: 1
       ENDSOURCE
       SOURCE #getEnum
         #//
-        #// mazzy, https://github.com/mazzy-ax/Args
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
         #//
         #// убедиться что в аргументах enum указанного типа и
         #// вернуть значение этого enum из аргументов
@@ -228,7 +365,7 @@ Formatversion: 1
       ENDSOURCE
       SOURCE #getEnumDefault
         #//
-        #// mazzy, https://github.com/mazzy-ax/Args
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
         #//
         #// тоже самое, что и Args::getEnum()
         #// но если в аргументах не нужный enum не выдает ошибку, а возвращает дефолтное значение.
@@ -242,7 +379,7 @@ Formatversion: 1
       ENDSOURCE
       SOURCE #getMarkedRecIds
         #//
-        #// mazzy, https://github.com/mazzy-ax/Args
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
         #//
         #public static container getMarkedRecIds(Args args, TableId tableId)
         #{
@@ -274,7 +411,7 @@ Formatversion: 1
       ENDSOURCE
       SOURCE #getRecord
         #//
-        #// mazzy, https://github.com/mazzy-ax/Args
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
         #//
         #public static Common getRecord(Args args, TableId tableId = 0)
         #{;
@@ -296,13 +433,13 @@ Formatversion: 1
     PROPERTIES
       Name                #ArgsTest
       Extends             #SysTestCase
-      Origin              #{7794BB55-B5F1-4DED-AE21-C6521B8D735E}
+      Origin              #{5822E9A8-B212-4C29-8D67-D423FF776E66}
     ENDPROPERTIES
     
     METHODS
       SOURCE #classDeclaration
         #//
-        #// mazzy, https://github.com/mazzy-ax/Args
+        #// mazzy, https://github.com/mazzy-ax/SysArgs
         #//
         #
         #// not yet implemented
@@ -317,7 +454,7 @@ Formatversion: 1
         #{
         #    Args        args            = new Args();
         #
-        #    str         formName        = formstr(SysUserInfoPage);
+        #    str         formName        = formstr(SysUserInfoDetail);
         #    Args        formRunArgs     = new Args(formName);
         #    FormRun     formRun         = classFactory.formRunClass(formRunArgs);
         #;
@@ -331,7 +468,7 @@ Formatversion: 1
         #void testAssertCallerFormName_Empty()
         #{
         #    Args    args        = new Args();
-        #    str     formName    = formstr(SysUserInfoPage);
+        #    str     formName    = formstr(SysUserInfoDetail);
         #;
         #    this.parmExceptionExpected(true);
         #    Args::assertCallerFormName(args, formName);
@@ -341,7 +478,7 @@ Formatversion: 1
         #void testAssertCallerFormName_NotForm()
         #{
         #    Args    args        = new Args();
-        #    str     formName    = formstr(SysUserInfoPage);
+        #    str     formName    = formstr(SysUserInfoDetail);
         #;
         #    args.caller(this);
         #
@@ -354,7 +491,7 @@ Formatversion: 1
         #{
         #    Args        args            = new Args();
         #
-        #    str         formName        = formstr(SysUserInfoPage);
+        #    str         formName        = formstr(SysUserInfoDetail);
         #    Args        formRunArgs     = new Args(formName);
         #    FormRun     formRun         = classFactory.formRunClass(formRunArgs);
         #;
@@ -368,7 +505,7 @@ Formatversion: 1
         #void testAssertCallerFormName_Null()
         #{
         #    Args    args;
-        #    str     formName    = formstr(SysUserInfoPage);
+        #    str     formName    = formstr(SysUserInfoDetail);
         #;
         #    this.parmExceptionExpected(true);
         #    Args::assertCallerFormName(args, formName);
@@ -719,6 +856,108 @@ Formatversion: 1
         #    this.assertFalse(Args::checkEnumType(args, enumnum(NoYes)));
         #}
       ENDSOURCE
+      SOURCE #testCheckFormDatasource_Empty
+        #void testCheckFormDatasource_Empty()
+        #{
+        #    Args        args    = new Args();
+        #;
+        #    this.assertFalse(Args::checkFormDatasource(args));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckFormDatasource_Fail
+        #void testCheckFormDatasource_Fail()
+        #{
+        #    Args        args    = new Args();
+        #    UserInfo    record;
+        #;
+        #    select firstOnly record;
+        #    args.record(record);
+        #
+        #    this.assertFalse(Args::checkFormDatasource(args));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckFormDatasource_Null
+        #void testCheckFormDatasource_Null()
+        #{
+        #    this.assertFalse(Args::checkFormDatasource(null));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckParm
+        #void testCheckParm()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.parm('something');
+        #
+        #    this.assertTrue(Args::checkParm(args,'something'));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckParm_Empty_Pattern
+        #void testCheckParm_Empty_Pattern()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    this.assertFalse(Args::checkParm(args,'<:a+>'));
+        #    this.assertFalse(Args::checkParm(args,':d'));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckParm_Empty_PatternEmpty
+        #void testCheckParm_Empty_PatternEmpty()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    this.assertTrue(Args::checkParm(args,''));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckParm_EmptyPatternDefault
+        #void testCheckParm_EmptyPatternDefault()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    this.assertFalse(Args::checkParm(args));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckParm_Fail
+        #void testCheckParm_Fail()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.parm('something');
+        #
+        #    this.assertFalse(Args::checkParm(args,'another'));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckParm_Pattern
+        #void testCheckParm_Pattern()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.parm('something');
+        #
+        #    this.assertTrue(Args::checkParm(args,'<:a+>'));
+        #    this.assertFalse(Args::checkParm(args,':d'));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckParm_PatternDefault
+        #void testCheckParm_PatternDefault()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.parm('something');
+        #
+        #    this.assertTrue(Args::checkParm(args));
+        #}
+      ENDSOURCE
+      SOURCE #testCheckParm_PatternEmpty
+        #void testCheckParm_PatternEmpty()
+        #{
+        #    Args    args    = new Args();
+        #;
+        #    args.parm('something');
+        #
+        #    this.assertTrue(Args::checkParm(args,''));
+        #}
+      ENDSOURCE
       SOURCE #testCheckRecord
         #void testCheckRecord()
         #{
@@ -836,7 +1075,7 @@ Formatversion: 1
         #{
         #    Args        args            = new Args();
         #
-        #    str         formName        = formstr(SysUserInfoPage);
+        #    str         formName        = formstr(SysUserInfoDetail);
         #    FormRun     formRun         = classFactory.formRunClass(new Args(formName));
         #;
         #    args.caller(formRun);
@@ -848,8 +1087,8 @@ Formatversion: 1
       SOURCE #testEnsureCallerFormName_Empty
         #void testEnsureCallerFormName_Empty()
         #{
-        #    Args     args       = new Args();
-        #    str      formName   = formstr(SysUserInfoPage);
+        #    str     formName    = formstr(SysUserInfoDetail);
+        #    Args    args        = new Args();
         #;
         #    this.parmExceptionExpected(true);
         #    args.ensureCallerFormName(formName);
@@ -858,13 +1097,13 @@ Formatversion: 1
       SOURCE #testEnsureCallerFormName_NotForm
         #void testEnsureCallerFormName_NotForm()
         #{
-        #    Args     args       = new Args();
-        #    str      formName   = formstr(SysUserInfoPage);
+        #    Args        args        = new Args();
+        #    str         formName    = formstr(SysUserInfoDetail);
         #;
         #    args.caller(this);
         #
         #    this.parmExceptionExpected(true);
-        #    args.ensureCallerFormName(formName);
+        #    Args.ensureCallerFormName(formName);
         #}
       ENDSOURCE
       SOURCE #testEnsureCallerFormName_NotMatch
@@ -872,14 +1111,14 @@ Formatversion: 1
         #{
         #    Args        args            = new Args();
         #
-        #    str         formName        = formstr(SysUserInfoPage);
+        #    str         formName        = formstr(SysUserInfoDetail);
         #    Args        formRunArgs     = new Args(formName);
         #    FormRun     formRun         = classFactory.formRunClass(formRunArgs);
         #;
         #    args.caller(formRun);
         #
         #    this.parmExceptionExpected(true);
-        #    args.ensureCallerFormName(formstr(SysUserGroupInfo));
+        #    Args.ensureCallerFormName(formstr(SysUserGroupInfo));
         #}
       ENDSOURCE
       SOURCE #testEnsureCallerType
@@ -890,89 +1129,89 @@ Formatversion: 1
         #    args.caller(this);
         #
         #    this.parmExceptionExpected(false);
-        #    args.ensureCallerType(classidget(this));
+        #    Args.ensureCallerType(classidget(this));
         #}
       ENDSOURCE
       SOURCE #testEnsureCallerType_Ancestor
         #void testEnsureCallerType_Ancestor()
         #{
-        #    Args    args    = new Args();
+        #    Args     args    = new Args();
         #;
         #    args.caller(this);
         #
         #    this.parmExceptionExpected(false);
-        #    args.ensureCallerType(classnum(SysTestAssert));
+        #    Args.ensureCallerType(classnum(SysTestAssert));
         #}
       ENDSOURCE
       SOURCE #testEnsureCallerType_Empty
         #void testEnsureCallerType_Empty()
         #{
-        #    Args     args     = new Args();
+        #    Args     Args     = new Args();
         #;
         #    this.parmExceptionExpected(true);
-        #    args.ensureCallerType(classidget(this));
+        #    Args.ensureCallerType(classidget(this));
         #}
       ENDSOURCE
       SOURCE #testEnsureCallerType_Interface
         #void testEnsureCallerType_Interface()
         #{
-        #    Args     args    = new Args();
-        #;
+        #    Args    args    = new Args();
+        #
         #    args.caller(this);
         #
         #    this.parmExceptionExpected(false);
-        #    args.ensureCallerType(classnum(SysTestable));
+        #    Args.ensureCallerType(classnum(SysTestable));
         #}
       ENDSOURCE
       SOURCE #testEnsureCallerType_NotMatch
         #void testEnsureCallerType_NotMatch()
         #{
-        #    Args     args    = new Args();
+        #    Args        args    = new Args();
         #;
         #    args.caller(this);
         #
         #    this.parmExceptionExpected(true);
-        #    args.ensureCallerType(classnum(FormRun));
+        #    Args.ensureCallerType(classnum(FormRun));
         #}
       ENDSOURCE
       SOURCE #testEnsureEnumType
         #void testEnsureEnumType()
         #{
-        #    Args     args = new Args();
+        #    Args        args    = new Args();
         #;
         #    args.parmEnumType(enumnum(NoYes));
         #
         #    this.parmExceptionExpected(false);
-        #    args.ensureEnumType(enumnum(NoYes));
+        #    Args.ensureEnumType(enumnum(NoYes));
         #}
       ENDSOURCE
       SOURCE #testEnsureEnumType_Empty
         #void testEnsureEnumType_Empty()
         #{
-        #    Args    args = new Args();
+        #    Args     Args = new Args();
         #;
         #    this.parmExceptionExpected(true);
-        #    args.ensureEnumType(enumnum(NoYes));
+        #    Args.ensureEnumType(enumnum(NoYes));
         #}
       ENDSOURCE
       SOURCE #testEnsureEnumType_NotMatch
         #void testEnsureEnumType_NotMatch()
         #{
-        #    Args    args = new Args();
+        #    Args        args    = new Args();
         #;
         #    args.parmEnumType(enumnum(NoYes));
         #
         #    this.parmExceptionExpected(true);
-        #    args.ensureEnumType(enumnum(LedgerTransType));
+        #    Args.ensureEnumType(enumnum(LedgerTransType));
         #}
       ENDSOURCE
       SOURCE #testEnsureFormDatasource_Empty
         #void testEnsureFormDatasource_Empty()
         #{
-        #    Args    args = new Args();
+        #    Args     Args = new Args();
         #;
         #    this.parmExceptionExpected(true);
-        #    args.ensureFormDatasource();
+        #    Args.ensureFormDatasource();
         #}
       ENDSOURCE
       SOURCE #testEnsureFormDatasource_Fail
@@ -986,6 +1225,13 @@ Formatversion: 1
         #
         #    this.parmExceptionExpected(true);
         #    args.ensureFormDatasource();
+        #}
+      ENDSOURCE
+      SOURCE #testEnsureFormDatasource_Null
+        #void testEnsureFormDatasource_Null()
+        #{
+        #    this.parmExceptionExpected(true);
+        #    Args::assertFormDatasource(null);
         #}
       ENDSOURCE
       SOURCE #testEnsureRecord
@@ -1011,7 +1257,7 @@ Formatversion: 1
         #    args.record(record);
         #
         #    this.parmExceptionExpected(false);
-        #    args.ensureRecord(record.TableId);
+        #    Args.ensureRecord(record.TableId);
         #}
       ENDSOURCE
       SOURCE #testEnsureRecord_Map
@@ -1023,7 +1269,7 @@ Formatversion: 1
         #    args.record(record);
         #
         #    this.parmExceptionExpected(false);
-        #    args.ensureRecord(tablenum(CustTrans));
+        #    Args.ensureRecord(tablenum(CustTrans));
         #}
       ENDSOURCE
       SOURCE #testEnsureRecord_MapEmpty
@@ -1035,7 +1281,7 @@ Formatversion: 1
         #    args.record(record);
         #
         #    this.parmExceptionExpected(true);
-        #    args.ensureRecord(tablenum(CustTrans));
+        #    Args.ensureRecord(tablenum(CustTrans));
         #}
       ENDSOURCE
       SOURCE #testEnsureRecord_NotMatch
@@ -1048,7 +1294,7 @@ Formatversion: 1
         #    args.record(record);
         #
         #    this.parmExceptionExpected(true);
-        #    args.ensureRecord(tablenum(UserGroupInfo));
+        #    Args.ensureRecord(tablenum(UserGroupInfo));
         #}
       ENDSOURCE
       SOURCE #testEnsureRecordExists
@@ -1061,7 +1307,7 @@ Formatversion: 1
         #    args.record(record);
         #
         #    this.parmExceptionExpected(false);
-        #    args.ensureRecordExists(record.TableId);
+        #    Args.ensureRecordExists(record.TableId);
         #}
       ENDSOURCE
       SOURCE #testEnsureRecordExists_Empty
@@ -1074,7 +1320,7 @@ Formatversion: 1
         #    args.record(record);
         #
         #    this.parmExceptionExpected(true);
-        #    args.ensureRecordExists(record.TableId);
+        #    Args.ensureRecordExists(record.TableId);
         #}
       ENDSOURCE
       SOURCE #testEnsureRecordExists_NotMatch
@@ -1087,7 +1333,7 @@ Formatversion: 1
         #    args.record(record);
         #
         #    this.parmExceptionExpected(true);
-        #    args.ensureRecordExists(tablenum(UserGroupInfo));
+        #    Args.ensureRecordExists(tablenum(UserGroupInfo));
         #}
       ENDSOURCE
       SOURCE #testGetEnum
@@ -1234,7 +1480,7 @@ Formatversion: 1
   SHARED
   PROPERTIES
     Name                #SysArgs
-    Origin              #{E8A5063F-D6DC-40AD-B5E4-5A8E9D0BDFC4}
+    Origin              #{49CF8A1F-4109-4970-AFB1-26AE9DEF7595}
   ENDPROPERTIES
   
     PROJECTCLASS ProjectNode
@@ -1248,7 +1494,7 @@ Formatversion: 1
     BEGINNODE
       FILETYPE 0
       UTILTYPE 45
-      UTILOBJECTID 1040837
+      UTILOBJECTID 1023823
       NODETYPE 329
       NAME #ArgsTest
     ENDNODE

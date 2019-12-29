@@ -377,6 +377,97 @@ class SysArgsTest extends SysTestCase
         this.assertFalse(SysArgs::checkEnumType(args, enumnum(NoYes)));
     }
 
+    void testCheckFormDatasource_Empty()
+    {
+        Args        args    = new Args();
+    ;
+        this.assertFalse(SysArgs::checkFormDatasource(args));
+    }
+
+    void testCheckFormDatasource_Fail()
+    {
+        Args        args    = new Args();
+        UserInfo    record;
+    ;
+        select firstOnly record;
+        args.record(record);
+
+        this.assertFalse(SysArgs::checkFormDatasource(args));
+    }
+
+    void testCheckFormDatasource_Null()
+    {
+        this.assertFalse(SysArgs::checkFormDatasource(null));
+    }
+
+    void testCheckParm()
+    {
+        Args    args    = new Args();
+    ;
+        args.parm('something');
+
+        this.assertTrue(SysArgs::checkParm(args,'something'));
+    }
+
+    void testCheckParm_Empty_Pattern()
+    {
+        Args    args    = new Args();
+    ;
+        this.assertFalse(SysArgs::checkParm(args,'<:a+>'));
+        this.assertFalse(SysArgs::checkParm(args,':d'));
+    }
+
+    void testCheckParm_Empty_PatternEmpty()
+    {
+        Args    args    = new Args();
+    ;
+        this.assertTrue(SysArgs::checkParm(args,''));
+    }
+
+    void testCheckParm_EmptyPatternDefault()
+    {
+        Args    args    = new Args();
+    ;
+        this.assertFalse(SysArgs::checkParm(args));
+    }
+
+    void testCheckParm_Fail()
+    {
+        Args    args    = new Args();
+    ;
+        args.parm('something');
+
+        this.assertFalse(SysArgs::checkParm(args,'another'));
+    }
+
+    void testCheckParm_Pattern()
+    {
+        Args    args    = new Args();
+    ;
+        args.parm('something');
+
+        this.assertTrue(SysArgs::checkParm(args,'<:a+>'));
+        this.assertFalse(SysArgs::checkParm(args,':d'));
+    }
+
+    void testCheckParm_PatternDefault()
+    {
+        Args    args    = new Args();
+    ;
+        args.parm('something');
+
+        this.assertTrue(SysArgs::checkParm(args));
+    }
+
+    void testCheckParm_PatternEmpty()
+    {
+        Args    args    = new Args();
+    ;
+        args.parm('something');
+
+        this.assertTrue(SysArgs::checkParm(args,''));
+    }
+
     void testCheckRecord()
     {
         Args        args    = new Args();
@@ -640,6 +731,12 @@ class SysArgsTest extends SysTestCase
 
         this.parmExceptionExpected(true);
         sysArgs.ensureFormDatasource();
+    }
+
+    void testEnsureFormDatasource_Null()
+    {
+        this.parmExceptionExpected(true);
+        SysArgs::assertFormDatasource(null);
     }
 
     void testEnsureRecord()

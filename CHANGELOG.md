@@ -2,11 +2,27 @@
 
 see also [Releases on GitHub](https://github.com/mazzy-ax/SysArgs/releases)
 
+[check-methods]:https://github.com/mazzy-ax/SysArgs/wiki/Check-methods
+[ensure-methods]:https://github.com/mazzy-ax/SysArgs/wiki/Ensure-methods
+[assert-methods]:https://github.com/mazzy-ax/SysArgs/wiki/Assert-methods
+
+## [0.3.0](https://github.com/mazzy-ax/SysArgs/compare/v0.2.0...v0.3.0) - 2019-12-29
+
+* добавлены методы:
+  * checkEnum, ensureEnum, assertEnum - значение Enum
+  * checkParm, ensureParm, assertParm - значение текстового параметра
+  * checkRecordTableIds, ensureRecordTableIds, assertRecordTableIds - соответствие одной из нескольких таблиц
+  * checkFormDatasource - в дополнение к уже существующим ensureFormDatasource и assertFormDatasource
+* добавлены юнит-тесты
+* исправлено:
+  * ensureFormDatasource и assertFormDatasource работают корректно, даже если в вызывающем датасорсе нет ни одной записи
+  * ссылка на проект SysArgs в комментариях методов для ax2012
+
 ## [0.2.0](https://github.com/mazzy-ax/SysArgs/compare/v0.1.0...v0.2.0) - 2019-01-16
 
 ### Добавлено
 
-* добавлены [ensure-методы](https://github.com/mazzy-ax/SysArgs/wiki/Ensure-methods):
+* добавлены [ensure-методы][Ensure-methods]:
   * ensureCallerFormName
   * ensureCallerType
   * ensureEnumType

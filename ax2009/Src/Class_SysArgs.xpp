@@ -20,6 +20,15 @@
     //
     // mazzy, https://github.com/mazzy-ax/SysArgs
     //
+    public SysArgs ensureEnum(Anytype enum, str _funcname = '')
+    {;
+        SysArgs::assertEnum(this, enum, _funcname ? _funcname : funcname());
+        return this;
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/SysArgs
+    //
     public SysArgs ensureEnumType(EnumId enumId, str _funcname = '')
     {;
         SysArgs::assertEnumType(this, enumId, _funcname ? _funcname : funcname());
@@ -38,6 +47,15 @@
     //
     // mazzy, https://github.com/mazzy-ax/SysArgs
     //
+    public SysArgs ensureParm(str matchPattern = '.', str _funcname = '')
+    {;
+        SysArgs::assertParm(this, matchPattern, _funcname ? _funcname : funcname());
+        return this;
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/SysArgs
+    //
     public SysArgs ensureRecord(TableId tableId = 0, str _funcname = '')
     {;
         SysArgs::assertRecord(this, tableId, _funcname ? _funcname : funcname());
@@ -50,6 +68,15 @@
     public SysArgs ensureRecordExists(TableId tableId = 0, str _funcname = '')
     {;
         SysArgs::assertRecordExists(this, tableId, _funcname ? _funcname : funcname());
+        return this;
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/SysArgs
+    //
+    public SysArgs ensureRecordTableIds(container tableIds, str _funcname = '')
+    {;
+        SysArgs::assertRecordTableIds(this, tableIds, _funcname ? _funcname : funcname());
         return this;
     }
 
@@ -78,6 +105,17 @@
     //
     // mazzy, https://github.com/mazzy-ax/SysArgs
     //
+    public static void assertEnum(Args args, Anytype enum, str _funcname = '')
+    {
+        if ( SysArgs::checkEnum(args, enum) )
+            return;
+
+        throw error(Error::missingRecord(_funcname ? _funcname : funcname()));
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/SysArgs
+    //
     public static void assertEnumType(Args args, EnumId enumId, str _funcname = '')
     {
         if( SysArgs::checkEnumType(args, enumId) )
@@ -91,10 +129,21 @@
     //
     public static void assertFormDatasource(Args args, str _funcname = '')
     {
-        if (args && args.record() && args.record().isFormDataSource())
+        if (SysArgs::checkFormDatasource(args))
             return;
 
         throw error(Error::wrongUseOfFunction(_funcname ? _funcname : funcname()));
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/SysArgs
+    //
+    public static void assertParm(Args args, str matchPattern = '.', str _funcname = '')
+    {
+        if ( SysArgs::checkParm(args, matchPattern) )
+            return;
+
+        throw error(Error::missingRecord(_funcname ? _funcname : funcname()));
     }
 
     //
@@ -122,6 +171,17 @@
     //
     // mazzy, https://github.com/mazzy-ax/SysArgs
     //
+    public static void assertRecordTableIds(Args args, container tableIds, str _funcname = '')
+    {
+        if ( SysArgs::checkRecordTableIds(args, tableIds) )
+            return;
+
+        throw error(Error::missingRecord(_funcname ? _funcname : funcname()));
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/SysArgs
+    //
     public static boolean checkCallerType(Args args, classId  potentialAncestorClassId)
     {
         boolean checkOk = args && args.caller() && SysDictClass::is(args.caller(), potentialAncestorClassId);
@@ -129,6 +189,22 @@
 
         return checkOk;
     }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/SysArgs
+    //
+    public static boolean checkEnum(Args args, Anytype enum)
+    {
+        boolean checkOk = (args != null);
+
+        if( checkOk && typeof(enum) == types::Enum)
+        {
+            checkOk = (enum == args.parmEnum());
+        }
+
+        return checkOk;
+    }
+
 
     //
     // mazzy, https://github.com/mazzy-ax/SysArgs
@@ -143,14 +219,42 @@
     //
     // mazzy, https://github.com/mazzy-ax/SysArgs
     //
+    public static boolean checkFormDatasource(Args args)
+    {
+        if (args && args.dataset() && args.record().isFormDataSource())
+            return true;
+
+        return false;
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/SysArgs
+    //
+    // параметр parm содержит паттерн.
+    // возвращает true, если parm-строка соответствует regexp-выражению в matchPattern (метод использует функцию match для проверки)
+    // если не указать matchPattern, то возвращает true, если parm не пустой (содержит хотя бы один символ)
+    // возвращает true, если matchPattern является пустой строкой
+    public static boolean checkParm(Args args, str matchPattern = '.')
+    {
+        boolean checkOk = (args && match(matchPattern, args.parm()));
+
+        return checkOk;
+    }
+
+
+    //
+    // mazzy, https://github.com/mazzy-ax/SysArgs
+    //
     // запись из указанной таблицы (или любой таблицы для tableId = 0)
     public static boolean checkRecord(Args args, TableId tableId = 0)
     {
         boolean checkOk = (args != null);
+        int     dataset;
 
         if( checkOk && tableId )
         {
-            checkOk = args.dataset() == tableId;
+            dataset = args.dataset();
+            checkOk = dataset == tableId;
         }
 
         return checkOk;
@@ -163,6 +267,28 @@
     public static boolean checkRecordExists(Args args, TableId tableId = 0)
     {
         boolean checkOk = (SysArgs::checkRecord(args, tableId) && args.record() && args.record().RecId != 0);
+
+        return checkOk;
+    }
+
+    //
+    // mazzy, https://github.com/mazzy-ax/SysArgs
+    //
+    // возвращает true, если:
+    // * контейнер содержит tableId, совпадающий с tableId таблицы
+    // * контейнер содержит 0
+    // * контейнер пустой
+    // возвращает false в остальных случаях
+    public static boolean checkRecordTableIds(Args args, container tableIds)
+    {
+        boolean checkOk = (args != null);
+        int     dataset;
+
+        if( checkOk && tableIds )
+        {
+            dataset = args.dataset();
+            checkOk = confind(tableIds, dataset) || confind(tableIds, 0);
+        }
 
         return checkOk;
     }

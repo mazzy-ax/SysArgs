@@ -23,7 +23,7 @@ reqTrans = SysArgs::getRecord(args, reqTrans.TableId);
 Вместо:
 
 ```java
-if (args.dataset() == tablenum(ReqTrans) && args.record().RecId)
+if( args.dataset() == reqTrans.TableId && args.record().RecId )
     reqTrans = args.record();
 else
     throw error(Error::missingFormActiveBuffer(element.name()));
@@ -43,7 +43,7 @@ if( SysArgs::checkRecord(args, tablenum(ProdTable)) )
 Вместо:
 
 ```java
-if (args && args.caller() && args.dataset() == tablenum(ProdTable) && args.record().RecId)
+if( args && args.caller() && args.dataset() == tablenum(ProdTable) && args.record().RecId )
 {
     // проверили, что есть вызвавший класс. нет проверки, что вызвали именно из формы
     ...
@@ -56,7 +56,7 @@ if (args && args.caller() && args.dataset() == tablenum(ProdTable) && args.recor
 ```java
 public static void main(Args args)
 {
-    ProdTable prod = args.ensureCallerType(classnum(FormRun)).getRecord(tablenum(ProdTable));
+    ProdTable prod = args.ensureCallerType(classnum(FormRun)).getRecord(prod.TableId);
     ...
 ```
 
@@ -67,9 +67,9 @@ public static void main(Args args)
 {
     ProdTable prod;
 
-    if (args && args.caller() && args.dataset() == tablenum(ProdTable) && args.record().RecId)
+    if( args && args.caller() && args.dataset() == prod.TableId && args.record().RecId )
     {
-        prod = callerForm.args().record();
+        prod = args.record();
         ...
 ```
 
