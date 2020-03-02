@@ -6,6 +6,11 @@ see also [Releases on GitHub](https://github.com/mazzy-ax/SysArgs/releases)
 [ensure-methods]:https://github.com/mazzy-ax/SysArgs/wiki/Ensure-methods
 [assert-methods]:https://github.com/mazzy-ax/SysArgs/wiki/Assert-methods
 
+## CRLF в .xpo-файлах - 2020-03-02
+
+В git-репозитории обновлены .xpo-файлы. Теперь они содержат `CRLF`, а не `LF`.
+Это изменение сделано для тех, кто не пользуется командой `git clone`, а выкачивает и распаковывает .zip-архив из git-репозитория
+
 ## [0.3.0](https://github.com/mazzy-ax/SysArgs/compare/v0.2.0...v0.3.0) - 2019-12-29
 
 * добавлены методы:
